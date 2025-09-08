@@ -1,0 +1,133 @@
+[
+  {
+    "model": "retos.categoria",
+    "pk": 1,
+    "fields": {
+      "nombre": "Lógica Básica",
+      "descripcion": "Problemas de razonamiento lógico fundamental",
+      "color": "#28a745"
+    }
+  },
+  {
+    "model": "retos.categoria",
+    "pk": 2,
+    "fields": {
+      "nombre": "Matemáticas",
+      "descripcion": "Problemas matemáticos y numéricos",
+      "color": "#007bff"
+    }
+  },
+  {
+    "model": "retos.categoria",
+    "pk": 3,
+    "fields": {
+      "nombre": "Secuencias",
+      "descripcion": "Patrones y secuencias numéricas",
+      "color": "#ffc107"
+    }
+  },
+  {
+    "model": "retos.categoria",
+    "pk": 4,
+    "fields": {
+      "nombre": "Geometría",
+      "descripcion": "Problemas geométricos y espaciales",
+      "color": "#dc3545"
+    }
+  },
+  {
+    "model": "retos.reto",
+    "pk": 1,
+    "fields": {
+      "titulo": "El problema de los sombreros",
+      "descripcion": "Un clásico problema de lógica deductiva",
+      "enunciado": "Tres personas están en una habitación y cada una tiene un sombrero. Hay 2 sombreros blancos y 1 sombrero negro. Cada persona puede ver los sombreros de las otras dos, pero no el suyo. Se les dice que al menos uno de ellos tiene un sombrero blanco. Después de un momento, la primera persona dice: 'No sé qué color tiene mi sombrero'. La segunda persona también dice: 'No sé qué color tiene mi sombrero'. Entonces la tercera persona dice: 'Sé qué color tiene mi sombrero'. ¿Qué color tiene el sombrero de la tercera persona?",
+      "respuesta_correcta": "blanco",
+      "explicacion": "Si la tercera persona tuviera un sombrero negro, las otras dos personas verían un sombrero negro y un sombrero blanco. Como saben que al menos uno tiene un sombrero blanco, inmediatamente sabrían que el suyo es blanco. Como no lo saben, significa que la tercera persona debe tener un sombrero blanco.",
+      "categoria": 1,
+      "dificultad": "facil",
+      "puntos": 10,
+      "fecha_creacion": "2024-01-01T10:00:00Z",
+      "fecha_modificacion": "2024-01-01T10:00:00Z",
+      "activo": true,
+      "intentos_totales": 0,
+      "intentos_exitosos": 0
+    }
+  },
+  {
+    "model": "retos.reto",
+    "pk": 2,
+    "fields": {
+      "titulo": "La suma de los números",
+      "descripcion": "Un problema matemático de suma",
+      "enunciado": "¿Cuál es la suma de todos los números enteros del 1 al 100?",
+      "respuesta_correcta": "5050",
+      "explicacion": "Se puede resolver usando la fórmula de Gauss: n(n+1)/2 = 100(101)/2 = 5050",
+      "categoria": 2,
+      "dificultad": "facil",
+      "puntos": 15,
+      "fecha_creacion": "2024-01-01T10:00:00Z",
+      "fecha_modificacion": "2024-01-01T10:00:00Z",
+      "activo": true,
+      "intentos_totales": 0,
+      "intentos_exitosos": 0
+    }
+  },
+  {
+    "model": "retos.reto",
+    "pk": 3,
+    "fields": {
+      "titulo": "Secuencia de Fibonacci",
+      "descripcion": "Identifica el siguiente número en la secuencia",
+      "enunciado": "En la secuencia de Fibonacci: 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765... ¿Cuál es el siguiente número?",
+      "respuesta_correcta": "10946",
+      "explicacion": "En la secuencia de Fibonacci, cada número es la suma de los dos anteriores: 6765 + 4181 = 10946",
+      "categoria": 3,
+      "dificultad": "medio",
+      "puntos": 20,
+      "fecha_creacion": "2024-01-01T10:00:00Z",
+      "fecha_modificacion": "2024-01-01T10:00:00Z",
+      "activo": true,
+      "intentos_totales": 0,
+      "intentos_exitosos": 0
+    }
+  },
+  {
+    "model": "retos.reto",
+    "pk": 4,
+    "fields": {
+      "titulo": "El triángulo imposible",
+      "descripcion": "Un problema de geometría avanzada",
+      "enunciado": "Un triángulo tiene lados de longitudes 3, 4 y 5. ¿Cuál es el área de este triángulo?",
+      "respuesta_correcta": "6",
+      "explicacion": "Es un triángulo rectángulo (3² + 4² = 5²). El área es (3 × 4) / 2 = 6",
+      "categoria": 4,
+      "dificultad": "medio",
+      "puntos": 25,
+      "fecha_creacion": "2024-01-01T10:00:00Z",
+      "fecha_modificacion": "2024-01-01T10:00:00Z",
+      "activo": true,
+      "intentos_totales": 0,
+      "intentos_exitosos": 0
+    }
+  },
+  {
+    "model": "retos.reto",
+    "pk": 5,
+    "fields": {
+      "titulo": "El problema de las monedas falsas",
+      "descripcion": "Un problema de lógica avanzada con pesadas",
+      "enunciado": "Tienes 12 monedas, una de las cuales es falsa (más ligera o más pesada). Tienes una balanza de dos platillos. ¿Cuál es el número mínimo de pesadas necesarias para encontrar la moneda falsa y determinar si es más ligera o más pesada?",
+      "respuesta_correcta": "3",
+      "explicacion": "Se puede resolver en 3 pesadas dividiendo las monedas en grupos de 4, luego comparando grupos, y finalmente comparando monedas individuales.",
+      "categoria": 1,
+      "dificultad": "dificil",
+      "puntos": 50,
+      "fecha_creacion": "2024-01-01T10:00:00Z",
+      "fecha_modificacion": "2024-01-01T10:00:00Z",
+      "activo": true,
+      "intentos_totales": 0,
+      "intentos_exitosos": 0
+    }
+  }
+]

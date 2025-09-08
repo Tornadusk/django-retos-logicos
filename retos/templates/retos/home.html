@@ -1,0 +1,114 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Inicio - Retos Lógico Matemáticos{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="jumbotron bg-primary text-white p-5 rounded mb-4">
+            <h1 class="display-4">¡Bienvenido a Retos Lógico Matemáticos!</h1>
+            <p class="lead">Pon a prueba tu capacidad de razonamiento lógico y resuelve desafiantes problemas matemáticos.</p>
+            {% if not user.is_authenticated %}
+                <a class="btn btn-light btn-lg" href="{% url 'cuentas:registro' %}" role="button">¡Comenzar Ahora!</a>
+            {% else %}
+                <a class="btn btn-light btn-lg" href="{% url 'retos:dashboard' %}" role="button">Ir al Dashboard</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-puzzle-piece fa-3x text-primary mb-3"></i>
+                <h5 class="card-title">{{ total_retos }}</h5>
+                <p class="card-text">Retos Disponibles</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-users fa-3x text-success mb-3"></i>
+                <h5 class="card-title">{{ total_usuarios }}</h5>
+                <p class="card-text">Usuarios Activos</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-trophy fa-3x text-warning mb-3"></i>
+                <h5 class="card-title">Competitivo</h5>
+                <p class="card-text">Sistema de Ranking</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-star fa-3x text-info mb-3"></i>
+                <h5 class="card-title">4 Niveles</h5>
+                <p class="card-text">De Dificultad</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <h3>Retos Más Populares</h3>
+        <div class="row">
+            {% for reto in retos_populares %}
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">{{ reto.titulo }}</h6>
+                            <p class="card-text text-muted small">{{ reto.descripcion|truncatewords:15 }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-{{ reto.dificultad|default:'secondary' }}">
+                                    {{ reto.get_dificultad_display }}
+                                </span>
+                                <small class="text-muted">
+                                    <i class="fas fa-users"></i> {{ reto.intentos_totales }} intentos
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <p class="text-muted">No hay retos disponibles aún.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <h3>Top Ranking</h3>
+        <div class="list-group">
+            {% for ranking in top_ranking %}
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>#{{ ranking.posicion }}</strong> {{ ranking.usuario.username }}
+                    </div>
+                    <span class="badge bg-primary rounded-pill">{{ ranking.puntuacion_total }} pts</span>
+                </div>
+            {% empty %}
+                <div class="list-group-item text-muted">
+                    No hay usuarios en el ranking aún.
+                </div>
+            {% endfor %}
+        </div>
+        
+        {% if user.is_authenticated %}
+            <div class="mt-3">
+                <a href="{% url 'retos:lista_retos' %}" class="btn btn-primary w-100">
+                    <i class="fas fa-list"></i> Ver Todos los Retos
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

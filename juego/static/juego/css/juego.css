@@ -1,0 +1,50 @@
+/* Estilos específicos para la app juego */
+
+.ranking-table {
+    font-size: 0.9rem;
+}
+
+.ranking-position {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.podium-card {
+    border: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.podium-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.podium-first {
+    border-color: #ffc107;
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+}
+
+.podium-second {
+    border-color: #6c757d;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+}
+
+.podium-third {
+    border-color: #fd7e14;
+    background: linear-gradient(135deg, #fff3e0, #ffcc80);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.achievement-badge {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}

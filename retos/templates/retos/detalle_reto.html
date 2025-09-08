@@ -1,0 +1,127 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ reto.titulo }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'retos:home' %}">Inicio</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'retos:lista_retos' %}">Retos</a></li>
+                <li class="breadcrumb-item active">{{ reto.titulo }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h2>{{ reto.titulo }}</h2>
+                <div class="mb-2">
+                    {% if reto.categoria %}
+                        <span class="badge bg-info">{{ reto.categoria.nombre }}</span>
+                    {% endif %}
+                    <span class="badge bg-{{ reto.dificultad|default:'secondary' }}">
+                        {{ reto.get_dificultad_display }}
+                    </span>
+                    <span class="badge bg-primary">{{ reto.puntos }} puntos</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <h5>Descripción</h5>
+                <p>{{ reto.descripcion }}</p>
+                
+                <hr>
+                
+                <h5>Enunciado</h5>
+                <div class="alert alert-light">
+                    {{ reto.enunciado|linebreaks }}
+                </div>
+                
+                {% if ya_intentado %}
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle"></i> Tu Intento</h6>
+                        <p><strong>Respuesta:</strong> {{ intento.respuesta_usuario }}</p>
+                        <p><strong>Resultado:</strong> 
+                            <span class="badge bg-{{ intento.es_correcto|yesno:'success,danger' }}">
+                                {{ intento.es_correcto|yesno:"Correcto,Incorrecto" }}
+                            </span>
+                        </p>
+                        {% if intento.es_correcto %}
+                            <p><strong>Puntos obtenidos:</strong> {{ intento.puntuacion_obtenida }}</p>
+                        {% endif %}
+                        <p><strong>Fecha:</strong> {{ intento.fecha_intento|date:"d/m/Y H:i" }}</p>
+                    </div>
+                    
+                    {% if intento.es_correcto and reto.explicacion %}
+                        <div class="alert alert-success">
+                            <h6><i class="fas fa-lightbulb"></i> Explicación</h6>
+                            {{ reto.explicacion|linebreaks }}
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <form method="post" action="{% url 'retos:intentar_reto' reto.pk %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="respuesta" class="form-label">Tu Respuesta</label>
+                            <textarea class="form-control" id="respuesta" name="respuesta" rows="3" 
+                                      placeholder="Escribe tu respuesta aquí..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i> Enviar Respuesta
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-bar"></i> Estadísticas</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <h6>{{ reto.intentos_totales }}</h6>
+                        <small class="text-muted">Intentos</small>
+                    </div>
+                    <div class="col-6">
+                        <h6>{{ reto.intentos_exitosos }}</h6>
+                        <small class="text-muted">Éxitos</small>
+                    </div>
+                </div>
+                <hr>
+                <div class="text-center">
+                    <h6>{{ tasa_exito }}%</h6>
+                    <small class="text-muted">Tasa de Éxito</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle"></i> Información</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Creado:</strong> {{ reto.fecha_creacion|date:"d/m/Y" }}</p>
+                {% if reto.creado_por %}
+                    <p><strong>Creado por:</strong> {{ reto.creado_por.username }}</p>
+                {% endif %}
+                <p><strong>Dificultad:</strong> {{ reto.get_dificultad_display }}</p>
+                <p><strong>Puntos:</strong> {{ reto.puntos }}</p>
+            </div>
+        </div>
+        
+        <div class="mt-3">
+            <a href="{% url 'retos:lista_retos' %}" class="btn btn-outline-secondary w-100">
+                <i class="fas fa-arrow-left"></i> Volver a la Lista
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

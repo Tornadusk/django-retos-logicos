@@ -1,0 +1,168 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Ranking de Usuarios{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2><i class="fas fa-trophy"></i> Ranking de Usuarios</h2>
+        <hr>
+    </div>
+</div>
+
+<!-- Estadísticas generales -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                <h4>{{ total_usuarios }}</h4>
+                <p class="mb-0">Usuarios Activos</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-star fa-2x text-warning mb-2"></i>
+                <h4>{{ total_puntos }}</h4>
+                <p class="mb-0">Puntos Totales</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-crown fa-2x text-success mb-2"></i>
+                <h4>Top 3</h4>
+                <p class="mb-0">Mejores Jugadores</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Top 3 -->
+{% if top_3 %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h4>🏆 Podium</h4>
+        <div class="row">
+            {% for ranking in top_3 %}
+                <div class="col-md-4">
+                    <div class="card text-center {% if ranking.posicion == 1 %}border-warning{% elif ranking.posicion == 2 %}border-secondary{% elif ranking.posicion == 3 %}border-warning{% endif %}">
+                        <div class="card-body">
+                            {% if ranking.posicion == 1 %}
+                                <i class="fas fa-crown fa-2x text-warning mb-2"></i>
+                            {% elif ranking.posicion == 2 %}
+                                <i class="fas fa-medal fa-2x text-secondary mb-2"></i>
+                            {% elif ranking.posicion == 3 %}
+                                <i class="fas fa-award fa-2x text-warning mb-2"></i>
+                            {% endif %}
+                            <h5>#{{ ranking.posicion }}</h5>
+                            <h6>{{ ranking.usuario.username }}</h6>
+                            <p class="text-primary"><strong>{{ ranking.puntuacion_total }} pts</strong></p>
+                            <small class="text-muted">{{ ranking.retos_completados }} retos</small>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Ranking completo -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-list-ol"></i> Ranking Completo</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Posición</th>
+                                <th>Usuario</th>
+                                <th>Puntos</th>
+                                <th>Retos Completados</th>
+                                <th>Última Actualización</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ranking in ranking %}
+                                <tr {% if ranking_usuario and ranking.usuario == ranking_usuario.usuario %}class="table-primary"{% endif %}>
+                                    <td>
+                                        {% if ranking.posicion <= 3 %}
+                                            {% if ranking.posicion == 1 %}
+                                                <i class="fas fa-crown text-warning"></i>
+                                            {% elif ranking.posicion == 2 %}
+                                                <i class="fas fa-medal text-secondary"></i>
+                                            {% elif ranking.posicion == 3 %}
+                                                <i class="fas fa-award text-warning"></i>
+                                            {% endif %}
+                                        {% endif %}
+                                        <strong>#{{ ranking.posicion }}</strong>
+                                    </td>
+                                    <td>
+                                        <strong>{{ ranking.usuario.username }}</strong>
+                                        {% if ranking.usuario.first_name or ranking.usuario.last_name %}
+                                            <br>
+                                            <small class="text-muted">
+                                                {{ ranking.usuario.first_name }} {{ ranking.usuario.last_name }}
+                                            </small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary">{{ ranking.puntuacion_total }}</span>
+                                    </td>
+                                    <td>{{ ranking.retos_completados }}</td>
+                                    <td>{{ ranking.fecha_actualizacion|date:"d/m/Y H:i" }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted">
+                                        No hay usuarios en el ranking aún.
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Paginación -->
+{% if is_paginated %}
+    <nav aria-label="Paginación del ranking">
+        <ul class="pagination justify-content-center mt-4">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">Primera</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                </li>
+            {% endif %}
+            
+            <li class="page-item active">
+                <span class="page-link">
+                    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                </span>
+            </li>
+            
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}
+{% endblock %}

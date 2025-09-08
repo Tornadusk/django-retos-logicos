@@ -1,0 +1,142 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Lista de Retos{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2><i class="fas fa-list"></i> Lista de Retos</h2>
+        <hr>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <label for="busqueda" class="form-label">Buscar</label>
+                        <input type="text" class="form-control" id="busqueda" name="busqueda" 
+                               value="{{ request.GET.busqueda }}" placeholder="Buscar retos...">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="dificultad" class="form-label">Dificultad</label>
+                        <select class="form-select" id="dificultad" name="dificultad">
+                            <option value="">Todas</option>
+                            {% for value, label in dificultades %}
+                                <option value="{{ value }}" {% if request.GET.dificultad == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="categoria" class="form-label">Categoría</label>
+                        <select class="form-select" id="categoria" name="categoria">
+                            <option value="">Todas</option>
+                            {% for categoria in categorias %}
+                                <option value="{{ categoria.id }}" {% if request.GET.categoria == categoria.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ categoria.nombre }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">&nbsp;</label>
+                        <div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i> Filtrar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Lista de retos -->
+<div class="row">
+    {% for reto in retos %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ reto.titulo }}</h5>
+                    <p class="card-text">{{ reto.descripcion|truncatewords:20 }}</p>
+                    
+                    <div class="mb-3">
+                        {% if reto.categoria %}
+                            <span class="badge bg-info">{{ reto.categoria.nombre }}</span>
+                        {% endif %}
+                        <span class="badge bg-{{ reto.dificultad|default:'secondary' }}">
+                            {{ reto.get_dificultad_display }}
+                        </span>
+                        <span class="badge bg-primary">{{ reto.puntos }} pts</span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="fas fa-users"></i> {{ reto.intentos_totales }} intentos
+                            <i class="fas fa-check-circle"></i> {{ reto.intentos_exitosos }} éxitos
+                        </small>
+                        {% if user.is_authenticated %}
+                            {% if reto.id in retos_intentados %}
+                                <span class="badge bg-success">Completado</span>
+                            {% else %}
+                                <a href="{% url 'retos:detalle_reto' reto.pk %}" class="btn btn-sm btn-outline-primary">
+                                    Intentar
+                                </a>
+                            {% endif %}
+                        {% else %}
+                            <a href="{% url 'cuentas:login' %}" class="btn btn-sm btn-outline-primary">
+                                Iniciar Sesión
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle fa-2x mb-3"></i>
+                <h4>No se encontraron retos</h4>
+                <p>Intenta ajustar los filtros de búsqueda.</p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<!-- Paginación -->
+{% if is_paginated %}
+    <nav aria-label="Paginación de retos">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{% if request.GET.busqueda %}&busqueda={{ request.GET.busqueda }}{% endif %}{% if request.GET.dificultad %}&dificultad={{ request.GET.dificultad }}{% endif %}{% if request.GET.categoria %}&categoria={{ request.GET.categoria }}{% endif %}">Primera</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.busqueda %}&busqueda={{ request.GET.busqueda }}{% endif %}{% if request.GET.dificultad %}&dificultad={{ request.GET.dificultad }}{% endif %}{% if request.GET.categoria %}&categoria={{ request.GET.categoria }}{% endif %}">Anterior</a>
+                </li>
+            {% endif %}
+            
+            <li class="page-item active">
+                <span class="page-link">
+                    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                </span>
+            </li>
+            
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.busqueda %}&busqueda={{ request.GET.busqueda }}{% endif %}{% if request.GET.dificultad %}&dificultad={{ request.GET.dificultad }}{% endif %}{% if request.GET.categoria %}&categoria={{ request.GET.categoria }}{% endif %}">Siguiente</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.busqueda %}&busqueda={{ request.GET.busqueda }}{% endif %}{% if request.GET.dificultad %}&dificultad={{ request.GET.dificultad }}{% endif %}{% if request.GET.categoria %}&categoria={{ request.GET.categoria }}{% endif %}">Última</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}
+{% endblock %}

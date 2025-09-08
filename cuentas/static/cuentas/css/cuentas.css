@@ -1,0 +1,68 @@
+/* Estilos específicos para la app cuentas */
+
+.auth-card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+.auth-header {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    border-radius: 0.375rem 0.375rem 0 0;
+}
+
+.form-floating-custom {
+    position: relative;
+}
+
+.form-floating-custom input {
+    padding-top: 1.625rem;
+    padding-bottom: 0.625rem;
+}
+
+.form-floating-custom label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    padding: 1rem 0.75rem;
+    pointer-events: none;
+    border: 1px solid transparent;
+    transform-origin: 0 0;
+    transition: opacity 0.1s ease-in-out, transform 0.1s ease-in-out;
+}
+
+.profile-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #007bff;
+}
+
+.profile-stats {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.password-strength {
+    height: 4px;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.password-strength.weak {
+    background-color: #dc3545;
+    width: 25%;
+}
+
+.password-strength.medium {
+    background-color: #ffc107;
+    width: 50%;
+}
+
+.password-strength.strong {
+    background-color: #28a745;
+    width: 100%;
+}
