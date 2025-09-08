@@ -1,6 +1,18 @@
 {% extends 'base/base.html' %}
+{% load static %}
 
 {% block title %}Lista de Retos{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'retos/css/dificultad.css' %}" rel="stylesheet">
+<style>
+/* Asegurar que los colores de dificultad se apliquen */
+.badge.bg-facil { background-color: #28a745 !important; color: white !important; }
+.badge.bg-medio { background-color: #ffc107 !important; color: #212529 !important; }
+.badge.bg-dificil { background-color: #fd7e14 !important; color: white !important; }
+.badge.bg-experto { background-color: #dc3545 !important; color: white !important; }
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -37,10 +49,33 @@
                         <select class="form-select" id="categoria" name="categoria">
                             <option value="">Todas</option>
                             {% for categoria in categorias %}
-                                <option value="{{ categoria.id }}" {% if request.GET.categoria == categoria.id|stringformat:"s" %}selected{% endif %}>
+                                <option value="{{ categoria.id }}" {% if request.GET.categoria == categoria.id|stringformat:"s" or request.GET.categoria == categoria.id %}selected{% endif %}>
                                     {{ categoria.nombre }}
                                 </option>
                             {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="orden" class="form-label">Ordenar por</label>
+                        <select class="form-select" id="orden" name="orden">
+                            <option value="fecha" {% if request.GET.orden == 'fecha' or not request.GET.orden %}selected{% endif %}>
+                                Fecha de creación
+                            </option>
+                            <option value="dificultad" {% if request.GET.orden == 'dificultad' %}selected{% endif %}>
+                                Dificultad
+                            </option>
+                            <option value="puntos" {% if request.GET.orden == 'puntos' %}selected{% endif %}>
+                                Puntos
+                            </option>
+                            <option value="prioridad" {% if request.GET.orden == 'prioridad' %}selected{% endif %}>
+                                Prioridad
+                            </option>
+                            <option value="popularidad" {% if request.GET.orden == 'popularidad' %}selected{% endif %}>
+                                Popularidad
+                            </option>
+                            <option value="aleatorio" {% if request.GET.orden == 'aleatorio' %}selected{% endif %}>
+                                Aleatorio
+                            </option>
                         </select>
                     </div>
                     <div class="col-md-2">
@@ -49,6 +84,9 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-search"></i> Filtrar
                             </button>
+                            <button type="button" class="btn btn-outline-secondary ms-2" onclick="limpiarFiltros()">
+                                <i class="fas fa-times"></i> Limpiar
+                            </button>
                         </div>
                     </div>
                 </form>
@@ -56,6 +94,36 @@
         </div>
     </div>
 </div>
+
+<!-- Indicador de filtros activos -->
+{% if request.GET.busqueda or request.GET.dificultad or request.GET.categoria or request.GET.orden != 'fecha' %}
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="alert alert-info">
+            <i class="fas fa-filter"></i> <strong>Filtros activos:</strong>
+            {% if request.GET.busqueda %}
+                <span class="badge bg-primary me-1">Búsqueda: "{{ request.GET.busqueda }}"</span>
+            {% endif %}
+            {% if request.GET.dificultad %}
+                <span class="badge bg-warning me-1">Dificultad: {{ request.GET.dificultad|title }}</span>
+            {% endif %}
+            {% if request.GET.categoria %}
+                {% for cat in categorias %}
+                    {% if cat.id|stringformat:"s" == request.GET.categoria %}
+                        <span class="badge bg-info me-1">Categoría: {{ cat.nombre }}</span>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            {% if request.GET.orden and request.GET.orden != 'fecha' %}
+                <span class="badge bg-secondary me-1">Orden: {{ request.GET.orden|title }}</span>
+            {% endif %}
+            <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="limpiarFiltros()">
+                <i class="fas fa-times"></i> Limpiar todos
+            </button>
+        </div>
+    </div>
+</div>
+{% endif %}
 
 <!-- Lista de retos -->
 <div class="row">
@@ -68,12 +136,26 @@
                     
                     <div class="mb-3">
                         {% if reto.categoria %}
-                            <span class="badge bg-info">{{ reto.categoria.nombre }}</span>
+                            <span class="badge bg-info me-1">{{ reto.categoria.nombre }}</span>
                         {% endif %}
-                        <span class="badge bg-{{ reto.dificultad|default:'secondary' }}">
-                            {{ reto.get_dificultad_display }}
+                        <span class="badge bg-{{ reto.dificultad|default:'secondary' }} me-1" title="Dificultad: {{ reto.dificultad }}">
+                            <i class="fas fa-signal"></i> {{ reto.get_dificultad_display }}
                         </span>
-                        <span class="badge bg-primary">{{ reto.puntos }} pts</span>
+                        <span class="badge bg-primary me-1">
+                            <i class="fas fa-star"></i> {{ reto.puntos }} pts
+                        </span>
+                        
+                        <!-- Indicadores de configuración especial -->
+                        {% if reto.orden_prioridad > 0 %}
+                            <span class="badge bg-warning" title="Prioridad alta: {{ reto.orden_prioridad }}">
+                                <i class="fas fa-star"></i> Prioridad
+                            </span>
+                        {% endif %}
+                        {% if reto.mostrar_aleatorio %}
+                            <span class="badge bg-success" title="Se muestra aleatoriamente">
+                                <i class="fas fa-random"></i> Aleatorio
+                            </span>
+                        {% endif %}
                     </div>
                     
                     <div class="d-flex justify-content-between align-items-center">
@@ -139,4 +221,8 @@
         </ul>
     </nav>
 {% endif %}
+
+{% block extra_js %}
+<script src="{% static 'retos/js/lista_retos.js' %}"></script>
+{% endblock %}
 {% endblock %}

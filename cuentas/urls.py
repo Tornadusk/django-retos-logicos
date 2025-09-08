@@ -6,8 +6,8 @@ app_name = 'cuentas'
 
 urlpatterns = [
     path('registro/', views.registro, name='registro'),
-    path('login/', auth_views.LoginView.as_view(template_name='cuentas/login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('login/', views.CustomLoginView.as_view(), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
     path('perfil/', views.perfil, name='perfil'),
     path('cambiar-password/', views.cambiar_password, name='cambiar_password'),
 ]

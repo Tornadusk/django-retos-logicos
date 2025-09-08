@@ -1,0 +1,103 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+<div id="site-name">
+    <a href="{% url 'admin:index' %}">
+        <h1 style="color: #fff; margin: 0; padding: 10px 0;">
+            🧩 Retos Lógico Matemáticos
+        </h1>
+        <p style="color: #ccc; margin: 0; font-size: 12px;">
+            Panel de Administración
+        </p>
+    </a>
+</div>
+{% endblock %}
+
+{% block nav-global %}
+<div style="background: #417690; padding: 10px; margin-bottom: 20px;">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+        <div style="color: white;">
+            <strong>Bienvenido, {{ user.username }}</strong>
+        </div>
+        <div style="color: white;">
+            <a href="{% url 'retos:home' %}" style="color: white; text-decoration: none; margin-right: 20px;">
+                🏠 Ir al Sitio
+            </a>
+            <a href="{% url 'admin:estadisticas' %}" style="color: white; text-decoration: none; margin-right: 20px;">
+                📊 Estadísticas
+            </a>
+            <a href="{% url 'admin:reportes' %}" style="color: white; text-decoration: none;">
+                📈 Reportes
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+    /* Estilos personalizados para el admin */
+    .module h2, .module caption, .inline-group h2 {
+        background: #417690;
+        color: white;
+    }
+    
+    .module h2 a:link, .module h2 a:visited {
+        color: white;
+    }
+    
+    .module h2 a:hover {
+        color: #ffc107;
+    }
+    
+    .object-tools a:link, .object-tools a:visited {
+        background: #28a745;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 4px;
+        text-decoration: none;
+    }
+    
+    .object-tools a:hover {
+        background: #218838;
+        color: white;
+    }
+    
+    .default {
+        background: #f8f9fa;
+    }
+    
+    .results th, .results td {
+        border: 1px solid #dee2e6;
+    }
+    
+    .results th {
+        background: #e9ecef;
+        font-weight: bold;
+    }
+    
+    .paginator a:link, .paginator a:visited {
+        background: #007bff;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 3px;
+        text-decoration: none;
+    }
+    
+    .paginator a:hover {
+        background: #0056b3;
+        color: white;
+    }
+    
+    .paginator .this-page {
+        background: #6c757d;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 3px;
+    }
+</style>
+{% endblock %}

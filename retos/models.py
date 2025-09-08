@@ -48,6 +48,10 @@ class Reto(models.Model):
     creado_por = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     activo = models.BooleanField(default=True)
     
+    # Control de ordenamiento
+    orden_prioridad = models.IntegerField(default=0, help_text="Prioridad de ordenamiento (mayor número = más arriba)")
+    mostrar_aleatorio = models.BooleanField(default=False, help_text="¿Mostrar este reto en orden aleatorio?")
+    
     # Estadísticas
     intentos_totales = models.IntegerField(default=0)
     intentos_exitosos = models.IntegerField(default=0)
@@ -72,3 +76,46 @@ class Reto(models.Model):
         self.intentos_totales = Intento.objects.filter(reto=self).count()
         self.intentos_exitosos = Intento.objects.filter(reto=self, es_correcto=True).count()
         self.save()
+
+class ConfiguracionOrdenamiento(models.Model):
+    """Configuración global del ordenamiento de retos"""
+    ORDEN_CHOICES = [
+        ('fecha', 'Por fecha de creación'),
+        ('dificultad', 'Por dificultad'),
+        ('puntos', 'Por puntos'),
+        ('aleatorio', 'Aleatorio'),
+        ('prioridad', 'Por prioridad'),
+        ('popularidad', 'Por popularidad'),
+    ]
+    
+    nombre = models.CharField(max_length=50, default="Configuración Principal")
+    orden_por_defecto = models.CharField(
+        max_length=20, 
+        choices=ORDEN_CHOICES, 
+        default='fecha',
+        help_text="Orden por defecto para mostrar retos"
+    )
+    incluir_aleatorios = models.BooleanField(
+        default=True,
+        help_text="¿Incluir retos marcados como aleatorios?"
+    )
+    max_retos_por_pagina = models.IntegerField(
+        default=10,
+        help_text="Número máximo de retos por página"
+    )
+    activo = models.BooleanField(default=True)
+    
+    class Meta:
+        verbose_name = "Configuración de Ordenamiento"
+        verbose_name_plural = "Configuraciones de Ordenamiento"
+    
+    def __str__(self):
+        return f"{self.nombre} - {self.get_orden_por_defecto_display()}"
+    
+    @classmethod
+    def get_configuracion_activa(cls):
+        """Obtener la configuración activa"""
+        try:
+            return cls.objects.filter(activo=True).first()
+        except:
+            return None

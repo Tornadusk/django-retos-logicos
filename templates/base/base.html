@@ -10,6 +10,8 @@
     <link href="{% static 'retos/css/retos.css' %}" rel="stylesheet">
     <link href="{% static 'juego/css/juego.css' %}" rel="stylesheet">
     <link href="{% static 'cuentas/css/cuentas.css' %}" rel="stylesheet">
+    {% block extra_css %}
+    {% endblock %}
     <style>
         .navbar-brand {
             font-weight: bold;
@@ -19,6 +21,24 @@
         }
         .card:hover {
             transform: translateY(-2px);
+        }
+        
+        /* Colores específicos para badges de dificultad */
+        .badge.bg-facil {
+            background-color: #28a745 !important;
+            color: white !important;
+        }
+        .badge.bg-medio {
+            background-color: #ffc107 !important;
+            color: #212529 !important;
+        }
+        .badge.bg-dificil {
+            background-color: #fd7e14 !important;
+            color: white !important;
+        }
+        .badge.bg-experto {
+            background-color: #dc3545 !important;
+            color: white !important;
         }
     </style>
 </head>
@@ -60,8 +80,18 @@
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{% url 'cuentas:perfil' %}">Perfil</a></li>
                                 <li><a class="dropdown-item" href="{% url 'juego:mis_estadisticas' %}">Mis Estadísticas</a></li>
+                                {% if user.is_staff %}
+                                <li><a class="dropdown-item" href="{% url 'admin:index' %}">Panel Admin</a></li>
+                                {% endif %}
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{% url 'cuentas:logout' %}">Cerrar Sesión</a></li>
+                                <li>
+                                    <form method="post" action="{% url 'cuentas:logout' %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item" style="border: none; background: none; width: 100%; text-align: left;">
+                                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                                        </button>
+                                    </form>
+                                </li>
                             </ul>
                         </li>
                     {% else %}

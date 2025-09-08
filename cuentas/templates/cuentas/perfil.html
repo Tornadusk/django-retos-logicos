@@ -1,0 +1,119 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Mi Perfil{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">👤 Mi Perfil</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_first_name" class="form-label">Nombre:</label>
+                                    <input type="text" class="form-control" id="id_first_name" name="first_name" 
+                                           value="{{ user.first_name }}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_last_name" class="form-label">Apellido:</label>
+                                    <input type="text" class="form-control" id="id_last_name" name="last_name" 
+                                           value="{{ user.last_name }}" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_email" class="form-label">Email:</label>
+                            <input type="email" class="form-control" id="id_email" name="email" 
+                                   value="{{ user.email }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Usuario:</label>
+                            <input type="text" class="form-control" id="id_username" name="username" 
+                                   value="{{ user.username }}" required>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Guardar Cambios
+                            </button>
+                            {% if user.is_staff %}
+                                <a href="{% url 'admin:password_change' %}" class="btn btn-warning">
+                                    <i class="fas fa-key"></i> Cambiar Contraseña (Admin)
+                                </a>
+                            {% else %}
+                                <a href="{% url 'cuentas:cambiar_password' %}" class="btn btn-warning">
+                                    <i class="fas fa-key"></i> Cambiar Contraseña
+                                </a>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">📊 Mis Estadísticas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div class="display-6 text-primary">{{ perfil.puntuacion_total }}</div>
+                        <small class="text-muted">Puntos Totales</small>
+                    </div>
+                    
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="h5 text-success">{{ perfil.retos_completados }}</div>
+                            <small class="text-muted">Retos Completados</small>
+                        </div>
+                        <div class="col-6">
+                            <div class="h5 text-info">{{ perfil.nivel }}</div>
+                            <small class="text-muted">Nivel</small>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="text-center">
+                        <small class="text-muted">
+                            Miembro desde:<br>
+                            <strong>{{ perfil.fecha_registro|date:"d/m/Y" }}</strong>
+                        </small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0">🎯 Acciones Rápidas</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'retos:dashboard' %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                        <a href="{% url 'juego:ranking' %}" class="btn btn-outline-success btn-sm">
+                            <i class="fas fa-trophy"></i> Ver Ranking
+                        </a>
+                        <a href="{% url 'juego:mis_estadisticas' %}" class="btn btn-outline-info btn-sm">
+                            <i class="fas fa-chart-line"></i> Mis Estadísticas
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

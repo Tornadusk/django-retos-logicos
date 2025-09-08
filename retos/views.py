@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView
 from django.db.models import Q, Count
 from django.contrib import messages
-from .models import Reto, Categoria
+from .models import Reto, Categoria, ConfiguracionOrdenamiento
 from juego.models import Intento, Ranking
 
 def home(request):
@@ -99,7 +99,25 @@ class ListaRetosView(ListView):
                 Q(enunciado__icontains=busqueda)
             )
         
-        return queryset.order_by('dificultad', 'puntos')
+        # Aplicar ordenamiento
+        orden = self.request.GET.get('orden', 'fecha')
+        
+        if orden == 'fecha':
+            queryset = queryset.order_by('-fecha_creacion')
+        elif orden == 'dificultad':
+            queryset = queryset.order_by('dificultad', 'puntos')
+        elif orden == 'puntos':
+            queryset = queryset.order_by('-puntos')
+        elif orden == 'prioridad':
+            queryset = queryset.order_by('-orden_prioridad', '-fecha_creacion')
+        elif orden == 'popularidad':
+            queryset = queryset.order_by('-intentos_totales')
+        elif orden == 'aleatorio':
+            import random
+            queryset = list(queryset)
+            random.shuffle(queryset)
+        
+        return queryset
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

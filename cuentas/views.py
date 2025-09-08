@@ -2,19 +2,22 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LoginView
 from django.contrib import messages
 from django.contrib.auth.models import User
 from .models import PerfilUsuario
+from .forms import RegistroForm, LoginForm
 from juego.models import Ranking
 
 def registro(request):
     """Vista para el registro de nuevos usuarios"""
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = RegistroForm(request.POST)
         if form.is_valid():
             user = form.save()
             username = form.cleaned_data.get('username')
-            messages.success(request, f'¡Cuenta creada para {username}!')
+            email = form.cleaned_data.get('email')
+            messages.success(request, f'¡Cuenta creada para {username}! Se envió un email de confirmación a {email}')
             
             # Autenticar y loguear al usuario
             login(request, user)
@@ -24,9 +27,27 @@ def registro(request):
             
             return redirect('retos:dashboard')
     else:
-        form = UserCreationForm()
+        form = RegistroForm()
     
     return render(request, 'cuentas/registro.html', {'form': form})
+
+class CustomLoginView(LoginView):
+    """Vista personalizada de login que permite email o username"""
+    form_class = LoginForm
+    template_name = 'cuentas/login.html'
+    
+    def form_valid(self, form):
+        """Mensaje de bienvenida personalizado"""
+        username = form.cleaned_data.get('username')
+        user = form.get_user()
+        
+        # Mostrar mensaje de bienvenida
+        if user.first_name:
+            messages.success(self.request, f'¡Bienvenido de vuelta, {user.first_name}!')
+        else:
+            messages.success(self.request, f'¡Bienvenido de vuelta, {username}!')
+        
+        return super().form_valid(form)
 
 @login_required
 def perfil(request):
@@ -61,10 +82,15 @@ def perfil(request):
 @login_required
 def cambiar_password(request):
     """Vista para cambiar la contraseña del usuario"""
+    # Si es administrador, redirigir al panel admin
+    if request.user.is_staff:
+        messages.info(request, 'Como administrador, debes cambiar tu contraseña desde el Panel de Administración.')
+        return redirect('admin:password_change')
+    
     if request.method == 'POST':
-        password_actual = request.POST.get('password_actual')
-        password_nueva = request.POST.get('password_nueva')
-        password_confirmar = request.POST.get('password_confirmar')
+        password_actual = request.POST.get('old_password')
+        password_nueva = request.POST.get('new_password1')
+        password_confirmar = request.POST.get('new_password2')
         
         # Verificar contraseña actual
         if not request.user.check_password(password_actual):

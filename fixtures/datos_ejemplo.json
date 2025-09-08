@@ -50,6 +50,8 @@
       "fecha_creacion": "2024-01-01T10:00:00Z",
       "fecha_modificacion": "2024-01-01T10:00:00Z",
       "activo": true,
+      "orden_prioridad": 0,
+      "mostrar_aleatorio": false,
       "intentos_totales": 0,
       "intentos_exitosos": 0
     }
@@ -69,6 +71,8 @@
       "fecha_creacion": "2024-01-01T10:00:00Z",
       "fecha_modificacion": "2024-01-01T10:00:00Z",
       "activo": true,
+      "orden_prioridad": 0,
+      "mostrar_aleatorio": false,
       "intentos_totales": 0,
       "intentos_exitosos": 0
     }
@@ -88,6 +92,8 @@
       "fecha_creacion": "2024-01-01T10:00:00Z",
       "fecha_modificacion": "2024-01-01T10:00:00Z",
       "activo": true,
+      "orden_prioridad": 0,
+      "mostrar_aleatorio": false,
       "intentos_totales": 0,
       "intentos_exitosos": 0
     }
@@ -107,6 +113,8 @@
       "fecha_creacion": "2024-01-01T10:00:00Z",
       "fecha_modificacion": "2024-01-01T10:00:00Z",
       "activo": true,
+      "orden_prioridad": 0,
+      "mostrar_aleatorio": false,
       "intentos_totales": 0,
       "intentos_exitosos": 0
     }
@@ -126,6 +134,206 @@
       "fecha_creacion": "2024-01-01T10:00:00Z",
       "fecha_modificacion": "2024-01-01T10:00:00Z",
       "activo": true,
+      "orden_prioridad": 0,
+      "mostrar_aleatorio": false,
+      "intentos_totales": 0,
+      "intentos_exitosos": 0
+    }
+  },
+  {
+    "model": "retos.reto",
+    "pk": 6,
+    "fields": {
+      "titulo": "El problema de las luces",
+      "descripcion": "Un problema de lógica con interruptores",
+      "enunciado": "Tienes 3 interruptores en una habitación y 3 bombillas en otra habitación. Solo puedes ir una vez a la habitación de las bombillas. ¿Cómo puedes determinar qué interruptor controla cada bombilla?",
+      "respuesta_correcta": "Enciende el primer interruptor por 5 minutos, luego apágalo y enciende el segundo. Ve a la habitación: la bombilla encendida corresponde al segundo interruptor, la caliente pero apagada al primero, y la fría al tercero.",
+      "explicacion": "Usa el calor de las bombillas como indicador. La bombilla que estuvo encendida estará caliente pero apagada.",
+      "categoria": 1,
+      "dificultad": "medio",
+      "puntos": 30,
+      "fecha_creacion": "2024-01-01T10:00:00Z",
+      "fecha_modificacion": "2024-01-01T10:00:00Z",
+      "activo": true,
+      "orden_prioridad": 5,
+      "mostrar_aleatorio": true,
+      "intentos_totales": 0,
+      "intentos_exitosos": 0
+    }
+  },
+  {
+    "model": "retos.reto",
+    "pk": 7,
+    "fields": {
+      "titulo": "El problema del puente",
+      "descripcion": "Un problema de optimización clásico",
+      "enunciado": "4 personas necesitan cruzar un puente en la noche. Solo tienen una linterna y el puente solo soporta 2 personas a la vez. Los tiempos para cruzar son: Persona A (1 min), Persona B (2 min), Persona C (5 min), Persona D (10 min). ¿Cuál es el tiempo mínimo para que todos crucen?",
+      "respuesta_correcta": "17",
+      "explicacion": "Estrategia óptima: A y B cruzan (2 min), A regresa (1 min), C y D cruzan (10 min), B regresa (2 min), A y B cruzan (2 min). Total: 17 minutos.",
+      "categoria": 1,
+      "dificultad": "dificil",
+      "puntos": 40,
+      "fecha_creacion": "2024-01-01T10:00:00Z",
+      "fecha_modificacion": "2024-01-01T10:00:00Z",
+      "activo": true,
+      "orden_prioridad": 10,
+      "mostrar_aleatorio": false,
+      "intentos_totales": 0,
+      "intentos_exitosos": 0
+    }
+  },
+  {
+    "model": "retos.reto",
+    "pk": 8,
+    "fields": {
+      "titulo": "El problema de las edades",
+      "descripcion": "Un problema matemático de edades",
+      "enunciado": "Un padre tiene 3 hijos. El producto de sus edades es 36 y la suma es igual al número de la casa de enfrente. El mayor tiene los ojos azules. ¿Cuáles son las edades de los hijos?",
+      "respuesta_correcta": "9, 2, 2",
+      "explicacion": "Las combinaciones que dan producto 36 son: (1,1,36), (1,2,18), (1,3,12), (1,4,9), (1,6,6), (2,2,9), (2,3,6), (3,3,4). Solo (1,6,6) y (2,2,9) tienen la misma suma (13). Como hay un mayor, debe ser (2,2,9).",
+      "categoria": 2,
+      "dificultad": "dificil",
+      "puntos": 35,
+      "fecha_creacion": "2024-01-01T10:00:00Z",
+      "fecha_modificacion": "2024-01-01T10:00:00Z",
+      "activo": true,
+      "orden_prioridad": 3,
+      "mostrar_aleatorio": true,
+      "intentos_totales": 0,
+      "intentos_exitosos": 0
+    }
+  },
+  {
+    "model": "retos.configuracionordenamiento",
+    "pk": 1,
+    "fields": {
+      "nombre": "Configuración Principal",
+      "orden_por_defecto": "fecha",
+      "incluir_aleatorios": true,
+      "max_retos_por_pagina": 10,
+      "activo": true
+    }
+  },
+  {
+    "model": "retos.configuracionordenamiento",
+    "pk": 2,
+    "fields": {
+      "nombre": "Modo Aleatorio",
+      "orden_por_defecto": "aleatorio",
+      "incluir_aleatorios": true,
+      "max_retos_por_pagina": 15,
+      "activo": false
+    }
+  },
+  {
+    "model": "retos.configuracionordenamiento",
+    "pk": 3,
+    "fields": {
+      "nombre": "Por Dificultad",
+      "orden_por_defecto": "dificultad",
+      "incluir_aleatorios": false,
+      "max_retos_por_pagina": 12,
+      "activo": false
+    }
+  },
+  {
+    "model": "retos.categoria",
+    "pk": 5,
+    "fields": {
+      "nombre": "Problemas de Palabras",
+      "descripcion": "Problemas que requieren interpretación de texto",
+      "color": "#6f42c1"
+    }
+  },
+  {
+    "model": "retos.categoria",
+    "pk": 6,
+    "fields": {
+      "nombre": "Optimización",
+      "descripcion": "Problemas de optimización y eficiencia",
+      "color": "#fd7e14"
+    }
+  },
+  {
+    "model": "retos.reto",
+    "pk": 9,
+    "fields": {
+      "titulo": "El problema de las monedas",
+      "descripcion": "Un problema clásico de combinatoria",
+      "enunciado": "Tienes monedas de 1, 5, 10 y 25 centavos. ¿De cuántas maneras diferentes puedes hacer 50 centavos?",
+      "respuesta_correcta": "49",
+      "explicacion": "Se puede resolver usando programación dinámica o enumerando todas las combinaciones posibles.",
+      "categoria": 2,
+      "dificultad": "medio",
+      "puntos": 25,
+      "fecha_creacion": "2024-01-01T10:00:00Z",
+      "fecha_modificacion": "2024-01-01T10:00:00Z",
+      "activo": true,
+      "orden_prioridad": 2,
+      "mostrar_aleatorio": false,
+      "intentos_totales": 0,
+      "intentos_exitosos": 0
+    }
+  },
+  {
+    "model": "retos.reto",
+    "pk": 10,
+    "fields": {
+      "titulo": "El problema de las torres de Hanoi",
+      "descripcion": "Un problema clásico de recursión",
+      "enunciado": "Tienes 3 torres y 5 discos de diferentes tamaños. Los discos están apilados en la primera torre, del más grande al más pequeño. ¿Cuál es el número mínimo de movimientos para mover todos los discos a la tercera torre?",
+      "respuesta_correcta": "31",
+      "explicacion": "Para n discos, el número mínimo de movimientos es 2^n - 1. Para 5 discos: 2^5 - 1 = 32 - 1 = 31.",
+      "categoria": 1,
+      "dificultad": "dificil",
+      "puntos": 45,
+      "fecha_creacion": "2024-01-01T10:00:00Z",
+      "fecha_modificacion": "2024-01-01T10:00:00Z",
+      "activo": true,
+      "orden_prioridad": 8,
+      "mostrar_aleatorio": true,
+      "intentos_totales": 0,
+      "intentos_exitosos": 0
+    }
+  },
+  {
+    "model": "retos.reto",
+    "pk": 11,
+    "fields": {
+      "titulo": "El problema de las 8 reinas",
+      "descripcion": "Un problema clásico de algoritmos",
+      "enunciado": "Coloca 8 reinas en un tablero de ajedrez de 8x8 de tal manera que ninguna reina pueda atacar a otra. ¿Cuántas soluciones únicas existen?",
+      "respuesta_correcta": "92",
+      "explicacion": "Existen 92 soluciones únicas para el problema de las 8 reinas. Se puede resolver usando backtracking.",
+      "categoria": 6,
+      "dificultad": "experto",
+      "puntos": 60,
+      "fecha_creacion": "2024-01-01T10:00:00Z",
+      "fecha_modificacion": "2024-01-01T10:00:00Z",
+      "activo": true,
+      "orden_prioridad": 15,
+      "mostrar_aleatorio": false,
+      "intentos_totales": 0,
+      "intentos_exitosos": 0
+    }
+  },
+  {
+    "model": "retos.reto",
+    "pk": 12,
+    "fields": {
+      "titulo": "El problema de las palabras cruzadas",
+      "descripcion": "Un problema de lógica con palabras",
+      "enunciado": "Encuentra una palabra de 5 letras que: 1) Empiece con 'C', 2) Termine con 'A', 3) Tenga una 'R' en el medio, 4) Sea un animal, 5) Viva en el agua.",
+      "respuesta_correcta": "CABRA",
+      "explicacion": "CABRA cumple todas las condiciones: empieza con C, termina con A, tiene R en el medio, es un animal, y las cabras pueden vivir cerca del agua.",
+      "categoria": 5,
+      "dificultad": "facil",
+      "puntos": 15,
+      "fecha_creacion": "2024-01-01T10:00:00Z",
+      "fecha_modificacion": "2024-01-01T10:00:00Z",
+      "activo": true,
+      "orden_prioridad": 1,
+      "mostrar_aleatorio": true,
       "intentos_totales": 0,
       "intentos_exitosos": 0
     }

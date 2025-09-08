@@ -1,0 +1,151 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Reportes del Sistema{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+    .reports-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+    }
+    
+    .report-card {
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .report-card h3 {
+        margin-top: 0;
+        color: #495057;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 10px;
+    }
+    
+    .chart-container {
+        margin: 20px 0;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+    
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 10px 0;
+    }
+    
+    .data-table th,
+    .data-table td {
+        border: 1px solid #dee2e6;
+        padding: 8px 12px;
+        text-align: left;
+    }
+    
+    .data-table th {
+        background: #e9ecef;
+        font-weight: bold;
+    }
+    
+    .data-table tr:nth-child(even) {
+        background: #f8f9fa;
+    }
+    
+    .no-data {
+        text-align: center;
+        color: #6c757d;
+        font-style: italic;
+        padding: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>📈 Reportes del Sistema</h1>
+
+<div class="reports-container">
+    <div class="report-card">
+        <h3>📅 Actividad por Fecha</h3>
+        <div class="chart-container">
+            {% if intentos_por_fecha %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Intentos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in intentos_por_fecha %}
+                        <tr>
+                            <td>{{ item.day|date:"d/m/Y" }}</td>
+                            <td>{{ item.count }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="no-data">
+                    No hay datos de actividad disponibles aún.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="report-card">
+        <h3>📊 Resumen de Actividad</h3>
+        <div class="chart-container">
+            <p><strong>Período analizado:</strong> Últimos 30 días</p>
+            <p><strong>Total de intentos:</strong> {{ intentos_por_fecha|length }}</p>
+            <p><strong>Días con actividad:</strong> {{ intentos_por_fecha|length }}</p>
+            {% if intentos_por_fecha %}
+                <p><strong>Promedio diario:</strong> 
+                    {% widthratio intentos_por_fecha|length 30 1 %} intentos
+                </p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="report-card">
+        <h3>🎯 Análisis de Tendencias</h3>
+        <div class="chart-container">
+            <p>Esta sección mostrará análisis más detallados cuando haya más datos disponibles:</p>
+            <ul>
+                <li>Horarios de mayor actividad</li>
+                <li>Días de la semana más populares</li>
+                <li>Tendencias de dificultad</li>
+                <li>Patrones de usuario</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="report-card">
+        <h3>📋 Próximas Funcionalidades</h3>
+        <div class="chart-container">
+            <p>Reportes que se agregarán próximamente:</p>
+            <ul>
+                <li>📊 Gráficos de barras y líneas</li>
+                <li>📈 Análisis de rendimiento por usuario</li>
+                <li>🎯 Estadísticas de retos por categoría</li>
+                <li>⏱️ Análisis de tiempos de respuesta</li>
+                <li>📱 Exportación a PDF/Excel</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div style="text-align: center; margin: 30px 0;">
+    <a href="{% url 'admin:index' %}" style="background: #007bff; color: white; padding: 10px 20px; border-radius: 4px; text-decoration: none; margin-right: 10px;">
+        ← Volver al Panel Principal
+    </a>
+    <a href="{% url 'admin:estadisticas' %}" style="background: #28a745; color: white; padding: 10px 20px; border-radius: 4px; text-decoration: none;">
+        📊 Ver Estadísticas
+    </a>
+</div>
+{% endblock %}

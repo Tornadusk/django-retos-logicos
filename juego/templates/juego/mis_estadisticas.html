@@ -1,0 +1,209 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Mis Estadísticas{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">📊 Mis Estadísticas Personales</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 text-center">
+                            <div class="stat-card">
+                                <div class="display-4 text-primary">{{ perfil.puntuacion_total }}</div>
+                                <h6 class="text-muted">Puntos Totales</h6>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="stat-card">
+                                <div class="display-4 text-success">{{ perfil.retos_completados }}</div>
+                                <h6 class="text-muted">Retos Completados</h6>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="stat-card">
+                                <div class="display-4 text-info">{{ perfil.nivel }}</div>
+                                <h6 class="text-muted">Nivel Actual</h6>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="stat-card">
+                                <div class="display-4 text-warning">{{ total_intentos }}</div>
+                                <h6 class="text-muted">Total Intentos</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">🎯 Rendimiento por Dificultad</h5>
+                </div>
+                <div class="card-body">
+                    {% if rendimiento_por_dificultad %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Dificultad</th>
+                                        <th>Completados</th>
+                                        <th>Intentos</th>
+                                        <th>% Éxito</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in rendimiento_por_dificultad %}
+                                    <tr>
+                                        <td>
+                                            <span class="badge 
+                                                {% if item.dificultad == 'facil' %}bg-success
+                                                {% elif item.dificultad == 'medio' %}bg-warning
+                                                {% elif item.dificultad == 'dificil' %}bg-danger
+                                                {% else %}bg-secondary{% endif %}">
+                                                {{ item.dificultad|title }}
+                                            </span>
+                                        </td>
+                                        <td>{{ item.completados }}</td>
+                                        <td>{{ item.intentos }}</td>
+                                        <td>
+                                            {% if item.intentos > 0 %}
+                                                {% widthratio item.completados item.intentos 100 %}%
+                                            {% else %}
+                                                0%
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted">
+                            <i class="fas fa-chart-bar fa-3x mb-3"></i>
+                            <p>No hay datos de rendimiento disponibles aún.</p>
+                            <a href="{% url 'retos:lista_retos' %}" class="btn btn-primary">
+                                <i class="fas fa-play"></i> ¡Comenzar a Jugar!
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">📈 Progreso Reciente</h5>
+                </div>
+                <div class="card-body">
+                    {% if intentos_recientes %}
+                        <div class="list-group list-group-flush">
+                            {% for intento in intentos_recientes %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">{{ intento.reto.titulo }}</h6>
+                                    <small class="text-muted">{{ intento.fecha_intento|date:"d/m/Y H:i" }}</small>
+                                </div>
+                                <div class="text-end">
+                                    {% if intento.es_correcto %}
+                                        <span class="badge bg-success">✅ +{{ intento.puntuacion_obtenida }} pts</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">❌ 0 pts</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted">
+                            <i class="fas fa-history fa-3x mb-3"></i>
+                            <p>No hay intentos recientes.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">🏆 Logros y Metas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <i class="fas fa-trophy fa-2x text-warning mb-2"></i>
+                                <h6>Próximo Nivel</h6>
+                                <p class="text-muted">
+                                    {% if perfil.nivel < 5 %}
+                                        Nivel {{ perfil.nivel|add:1 }}: {% widthratio perfil.nivel|add:1 1 100 %} puntos
+                                    {% else %}
+                                        ¡Nivel Máximo Alcanzado!
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <i class="fas fa-star fa-2x text-primary mb-2"></i>
+                                <h6>Retos Disponibles</h6>
+                                <p class="text-muted">{{ retos_disponibles }} retos por completar</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <i class="fas fa-chart-line fa-2x text-success mb-2"></i>
+                                <h6>Posición en Ranking</h6>
+                                <p class="text-muted">
+                                    {% if posicion_ranking %}
+                                        #{{ posicion_ranking }} de {{ total_usuarios }} usuarios
+                                    {% else %}
+                                        No clasificado aún
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center mt-4">
+        <a href="{% url 'retos:dashboard' %}" class="btn btn-primary">
+            <i class="fas fa-arrow-left"></i> Volver al Dashboard
+        </a>
+        <a href="{% url 'juego:ranking' %}" class="btn btn-success">
+            <i class="fas fa-trophy"></i> Ver Ranking Completo
+        </a>
+    </div>
+</div>
+
+<style>
+.stat-card {
+    padding: 20px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    background: #f8f9fa;
+}
+
+.stat-card:hover {
+    background: #e9ecef;
+    transition: background 0.3s;
+}
+</style>
+{% endblock %}
