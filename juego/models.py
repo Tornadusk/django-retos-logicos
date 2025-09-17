@@ -1,3 +1,29 @@
+"""
+APP "juego" - EXPERIENCIA DEL USUARIO
+====================================
+
+Esta app se encarga de:
+- Interacciones del usuario: intentos, respuestas, puntuaciones
+- Sistema de ranking: clasificación de usuarios
+- Progreso personal: qué ha resuelto cada usuario
+- Estadísticas de usuario: perfil, nivel, retos completados
+- Lógica de puntuación: cuántos puntos gana por cada reto
+
+Modelos principales:
+- Intento: Cada vez que un usuario intenta resolver un reto
+- Ranking: Clasificación global de usuarios
+- PerfilUsuario: Información extendida del usuario
+
+Trabaja en conjunto con la app "retos" que maneja el contenido educativo.
+
+FLUJO DE TRABAJO:
+retos (contenido) ←→ juego (interacción)
+     ↓                    ↓
+   "El problema"      "Usuario intenta"
+   "Respuesta: 17"    "Escribe: 17 minutos"
+   "Puntos: 40"       "Gana: 40 puntos"
+"""
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -17,7 +43,6 @@ class Intento(models.Model):
         verbose_name = "Intento"
         verbose_name_plural = "Intentos"
         ordering = ['-fecha_intento']
-        unique_together = ['usuario', 'reto']  # Un usuario solo puede intentar un reto una vez
     
     def __str__(self):
         estado = "✓" if self.es_correcto else "✗"
@@ -27,6 +52,19 @@ class Intento(models.Model):
         """Calcula la puntuación basada en la dificultad y tiempo de respuesta"""
         if not self.es_correcto:
             return 0
+        
+        # Verificar si ya había resuelto correctamente este reto antes
+        # Solo verificar si ya tenemos un ID (objeto ya guardado)
+        if self.pk:
+            intentos_anteriores_correctos = Intento.objects.filter(
+                usuario=self.usuario,
+                reto=self.reto,
+                es_correcto=True
+            ).exclude(pk=self.pk).exists()
+            
+            # Solo otorgar puntos si es el primer intento correcto
+            if intentos_anteriores_correctos:
+                return 0
         
         # Puntuación base según dificultad
         puntuacion_base = self.reto.puntos

@@ -1,4 +1,4 @@
-{% extends 'base/base.html' %}
+orles {% extends 'base/base.html' %}
 
 {% block title %}{{ reto.titulo }}{% endblock %}
 
@@ -28,6 +28,7 @@
                         {{ reto.get_dificultad_display }}
                     </span>
                     <span class="badge bg-primary">{{ reto.puntos }} puntos</span>
+                    <span class="badge bg-info">{{ reto.max_intentos }} intentos</span>
                 </div>
             </div>
             <div class="card-body">
@@ -42,36 +43,84 @@
                 </div>
                 
                 {% if ya_intentado %}
+                    <!-- Mostrar todos los intentos del usuario -->
                     <div class="alert alert-info">
-                        <h6><i class="fas fa-info-circle"></i> Tu Intento</h6>
-                        <p><strong>Respuesta:</strong> {{ intento.respuesta_usuario }}</p>
-                        <p><strong>Resultado:</strong> 
-                            <span class="badge bg-{{ intento.es_correcto|yesno:'success,danger' }}">
-                                {{ intento.es_correcto|yesno:"Correcto,Incorrecto" }}
-                            </span>
-                        </p>
-                        {% if intento.es_correcto %}
-                            <p><strong>Puntos obtenidos:</strong> {{ intento.puntuacion_obtenida }}</p>
-                        {% endif %}
-                        <p><strong>Fecha:</strong> {{ intento.fecha_intento|date:"d/m/Y H:i" }}</p>
+                        <h6><i class="fas fa-history"></i> Tus Intentos ({{ intentos_usuario.count }}/{{ reto.max_intentos }})</h6>
+                        {% for intento in intentos_usuario %}
+                            <div class="mb-2 p-2 border rounded">
+                                <p><strong>Intento #{{ forloop.counter }}:</strong> {{ intento.respuesta_usuario }}</p>
+                                <p><strong>Resultado:</strong> 
+                                    <span class="badge bg-{{ intento.es_correcto|yesno:'success,danger' }}">
+                                        {{ intento.es_correcto|yesno:"Correcto,Incorrecto" }}
+                                    </span>
+                                </p>
+                                {% if intento.es_correcto %}
+                                    <p><strong>Puntos obtenidos:</strong> {{ intento.puntuacion_obtenida }}</p>
+                                {% endif %}
+                                <p><strong>Fecha:</strong> {{ intento.fecha_intento|date:"d/m/Y H:i" }}</p>
+                            </div>
+                        {% endfor %}
                     </div>
                     
-                    {% if intento.es_correcto and reto.explicacion %}
+                    <!-- Mostrar respuesta correcta si agotó intentos y no resolvió -->
+                    {% if agoto_intentos and not resolvio_reto %}
+                        <div class="alert alert-warning">
+                            <h6><i class="fas fa-exclamation-triangle"></i> Has agotado todos tus intentos</h6>
+                            <p><strong>La respuesta correcta es:</strong> <span class="fw-bold text-primary">{{ reto.respuesta_correcta }}</span></p>
+                            {% if reto.explicacion %}
+                                <hr>
+                                <h6><i class="fas fa-lightbulb"></i> Explicación</h6>
+                                {{ reto.explicacion|linebreaks }}
+                            {% endif %}
+                        </div>
+                    {% elif resolvio_reto and reto.explicacion %}
                         <div class="alert alert-success">
                             <h6><i class="fas fa-lightbulb"></i> Explicación</h6>
                             {{ reto.explicacion|linebreaks }}
                         </div>
                     {% endif %}
-                {% else %}
+                    
+                    <!-- Mostrar botón para intentar de nuevo si no agotó intentos y no resolvió -->
+                    {% if not agoto_intentos and not resolvio_reto %}
+                        <div class="alert alert-secondary">
+                            <p><strong>Intentos restantes:</strong> {{ intentos_restantes }}</p>
+                        </div>
+                    {% endif %}
+                {% endif %}
+                
+                {% if not ya_intentado or not agoto_intentos and not resolvio_reto %}
+                    <!-- Mostrar ejemplos de respuestas si existen -->
+                    {% if reto.respuestas_alternativas.exists %}
+                        <div class="alert alert-info">
+                            <h6><i class="fas fa-lightbulb"></i> Ejemplos de respuestas válidas:</h6>
+                            <ul class="mb-0">
+                                {% for alt in reto.respuestas_alternativas.all %}
+                                    {% if alt.activa %}
+                                        <li><em>{{ alt.texto }}</em>{% if alt.descripcion %} - {{ alt.descripcion }}{% endif %}</li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                    
                     <form method="post" action="{% url 'retos:intentar_reto' reto.pk %}">
                         {% csrf_token %}
                         <div class="mb-3">
                             <label for="respuesta" class="form-label">Tu Respuesta</label>
                             <textarea class="form-control" id="respuesta" name="respuesta" rows="3" 
-                                      placeholder="Escribe tu respuesta aquí..." required></textarea>
+                                      placeholder="Escribe tu respuesta aquí... (puedes usar diferentes formatos)" required></textarea>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle"></i> 
+                                Puedes escribir la respuesta de diferentes maneras. El sistema es flexible y acepta variaciones.
+                            </div>
                         </div>
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-paper-plane"></i> Enviar Respuesta
+                            <i class="fas fa-paper-plane"></i> 
+                            {% if ya_intentado %}
+                                Intentar de Nuevo
+                            {% else %}
+                                Enviar Respuesta
+                            {% endif %}
                         </button>
                     </form>
                 {% endif %}
@@ -114,6 +163,7 @@
                 {% endif %}
                 <p><strong>Dificultad:</strong> {{ reto.get_dificultad_display }}</p>
                 <p><strong>Puntos:</strong> {{ reto.puntos }}</p>
+                <p><strong>Intentos máximos:</strong> {{ reto.max_intentos }}</p>
             </div>
         </div>
         

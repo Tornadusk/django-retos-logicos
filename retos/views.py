@@ -144,13 +144,13 @@ class DetalleRetoView(LoginRequiredMixin, DetailView):
         reto = self.get_object()
         usuario = self.request.user
         
-        # Verificar si el usuario ya intentó este reto
-        try:
-            intento = Intento.objects.get(usuario=usuario, reto=reto)
-            context['intento'] = intento
-            context['ya_intentado'] = True
-        except Intento.DoesNotExist:
-            context['ya_intentado'] = False
+        # Obtener intentos del usuario para este reto
+        intentos_usuario = reto.get_intentos_usuario(usuario)
+        context['intentos_usuario'] = intentos_usuario
+        context['intentos_restantes'] = reto.get_intentos_restantes(usuario)
+        context['agoto_intentos'] = reto.usuario_agoto_intentos(usuario)
+        context['resolvio_reto'] = reto.usuario_resolvio_reto(usuario)
+        context['ya_intentado'] = intentos_usuario.exists()
         
         # Estadísticas del reto
         context['tasa_exito'] = reto.calcular_tasa_exito()
@@ -162,9 +162,14 @@ def intentar_reto(request, pk):
     """Vista para procesar un intento de resolución de reto"""
     reto = get_object_or_404(Reto, pk=pk, activo=True)
     
-    # Verificar si ya intentó este reto
-    if Intento.objects.filter(usuario=request.user, reto=reto).exists():
-        messages.warning(request, 'Ya has intentado resolver este reto.')
+    # Verificar si ya resolvió el reto
+    if reto.usuario_resolvio_reto(request.user):
+        messages.info(request, 'Ya has resuelto correctamente este reto.')
+        return redirect('retos:detalle_reto', pk=pk)
+    
+    # Verificar si agotó los intentos
+    if reto.usuario_agoto_intentos(request.user):
+        messages.warning(request, 'Has agotado todos tus intentos para este reto.')
         return redirect('retos:detalle_reto', pk=pk)
     
     if request.method == 'POST':
@@ -174,8 +179,8 @@ def intentar_reto(request, pk):
             messages.error(request, 'Debes proporcionar una respuesta.')
             return redirect('retos:detalle_reto', pk=pk)
         
-        # Verificar si la respuesta es correcta (comparación simple)
-        es_correcto = respuesta_usuario.lower() == reto.respuesta_correcta.lower()
+        # Verificar si la respuesta es correcta (validación flexible)
+        es_correcto = reto.validar_respuesta(respuesta_usuario)
         
         # Crear el intento
         intento = Intento.objects.create(
@@ -188,10 +193,16 @@ def intentar_reto(request, pk):
         # Actualizar ranking
         Ranking.actualizar_ranking()
         
+        # Calcular intentos restantes
+        intentos_restantes = reto.get_intentos_restantes(request.user)
+        
         if es_correcto:
             messages.success(request, f'¡Correcto! Has ganado {intento.puntuacion_obtenida} puntos.')
         else:
-            messages.error(request, 'Respuesta incorrecta. Inténtalo de nuevo.')
+            if intentos_restantes > 0:
+                messages.error(request, f'Respuesta incorrecta. Te quedan {intentos_restantes} intentos.')
+            else:
+                messages.error(request, 'Respuesta incorrecta. Has agotado todos tus intentos.')
         
         return redirect('retos:detalle_reto', pk=pk)
     

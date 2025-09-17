@@ -1,5 +1,28 @@
+"""
+APP "retos" - GESTIÓN DE CONTENIDO EDUCATIVO
+============================================
+
+Esta app se encarga de:
+- Crear y gestionar los retos (problemas, puzzles, desafíos)
+- Contenido educativo: enunciados, respuestas correctas, explicaciones
+- Clasificación: categorías, dificultad, puntos
+- Configuración: número máximo de intentos, orden de prioridad
+- Respuestas alternativas: múltiples formatos de la misma respuesta
+- Estadísticas básicas: intentos totales, intentos exitosos
+
+Modelos principales:
+- Reto: El problema/puzzle en sí
+- Categoria: Clasificación de los retos
+- RespuestaAlternativa: Variaciones de respuestas correctas
+- ConfiguracionOrdenamiento: Cómo mostrar los retos
+
+Trabaja en conjunto con la app "juego" que maneja la interacción del usuario.
+"""
+
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator, MaxValueValidator
+import re
 
 class Categoria(models.Model):
     """Categorías para clasificar los retos"""
@@ -56,6 +79,13 @@ class Reto(models.Model):
     intentos_totales = models.IntegerField(default=0)
     intentos_exitosos = models.IntegerField(default=0)
     
+    # Control de intentos
+    max_intentos = models.IntegerField(
+        default=3, 
+        help_text="Número máximo de intentos permitidos por usuario (1-10)",
+        validators=[MinValueValidator(1), MaxValueValidator(10)]
+    )
+    
     class Meta:
         verbose_name = "Reto"
         verbose_name_plural = "Retos"
@@ -76,6 +106,104 @@ class Reto(models.Model):
         self.intentos_totales = Intento.objects.filter(reto=self).count()
         self.intentos_exitosos = Intento.objects.filter(reto=self, es_correcto=True).count()
         self.save()
+    
+    def get_intentos_usuario(self, usuario):
+        """Obtiene los intentos de un usuario específico para este reto"""
+        from juego.models import Intento
+        return Intento.objects.filter(usuario=usuario, reto=self).order_by('-fecha_intento')
+    
+    def get_intentos_restantes(self, usuario):
+        """Calcula cuántos intentos le quedan al usuario"""
+        intentos_usuario = self.get_intentos_usuario(usuario).count()
+        return max(0, self.max_intentos - intentos_usuario)
+    
+    def usuario_agoto_intentos(self, usuario):
+        """Verifica si el usuario ya agotó todos sus intentos"""
+        return self.get_intentos_restantes(usuario) == 0
+    
+    def usuario_resolvio_reto(self, usuario):
+        """Verifica si el usuario ya resolvió correctamente el reto"""
+        return self.get_intentos_usuario(usuario).filter(es_correcto=True).exists()
+    
+    def validar_respuesta(self, respuesta_usuario):
+        """Valida si la respuesta del usuario es correcta (más flexible)"""
+        if not respuesta_usuario:
+            return False
+        
+        # Normalizar respuesta del usuario
+        respuesta_normalizada = self._normalizar_respuesta(respuesta_usuario)
+        
+        # Obtener todas las respuestas correctas posibles
+        respuestas_correctas = self.get_respuestas_correctas()
+        
+        # Verificar si coincide con alguna respuesta correcta
+        for respuesta_correcta in respuestas_correctas:
+            if self._comparar_respuestas(respuesta_normalizada, respuesta_correcta):
+                return True
+        
+        return False
+    
+    def get_respuestas_correctas(self):
+        """Obtiene todas las respuestas correctas posibles para este reto"""
+        respuestas = [self.respuesta_correcta]
+        
+        # Agregar respuestas alternativas si existen
+        respuestas_alternativas = self.respuestas_alternativas.filter(activa=True)
+        for alt in respuestas_alternativas:
+            respuestas.append(alt.texto)
+        
+        return respuestas
+    
+    def _normalizar_respuesta(self, respuesta):
+        """Normaliza una respuesta para comparación"""
+        if not respuesta:
+            return ""
+        
+        # Convertir a minúsculas
+        respuesta = respuesta.lower().strip()
+        
+        # Remover caracteres especiales y espacios extra
+        respuesta = re.sub(r'[^\w\s]', '', respuesta)
+        respuesta = re.sub(r'\s+', ' ', respuesta).strip()
+        
+        return respuesta
+    
+    def _comparar_respuestas(self, respuesta_usuario, respuesta_correcta):
+        """Compara dos respuestas normalizadas"""
+        respuesta_correcta_normalizada = self._normalizar_respuesta(respuesta_correcta)
+        
+        # Comparación exacta
+        if respuesta_usuario == respuesta_correcta_normalizada:
+            return True
+        
+        # Comparación por palabras clave (para respuestas más complejas)
+        palabras_usuario = set(respuesta_usuario.split())
+        palabras_correcta = set(respuesta_correcta_normalizada.split())
+        
+        # Si hay al menos 80% de coincidencia en palabras clave
+        if len(palabras_correcta) > 0:
+            coincidencia = len(palabras_usuario.intersection(palabras_correcta)) / len(palabras_correcta)
+            if coincidencia >= 0.8:
+                return True
+        
+        return False
+
+
+class RespuestaAlternativa(models.Model):
+    """Respuestas alternativas correctas para un reto"""
+    reto = models.ForeignKey(Reto, on_delete=models.CASCADE, related_name='respuestas_alternativas')
+    texto = models.TextField(help_text="Texto de la respuesta alternativa")
+    descripcion = models.CharField(max_length=200, blank=True, help_text="Descripción de esta alternativa")
+    activa = models.BooleanField(default=True, help_text="¿Esta alternativa está activa?")
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name = "Respuesta Alternativa"
+        verbose_name_plural = "Respuestas Alternativas"
+        ordering = ['fecha_creacion']
+    
+    def __str__(self):
+        return f"{self.reto.titulo} - {self.texto[:50]}..."
 
 class ConfiguracionOrdenamiento(models.Model):
     """Configuración global del ordenamiento de retos"""

@@ -1,3 +1,20 @@
+"""
+APP "cuentas" - GESTIÓN DE USUARIOS
+===================================
+
+Esta app se encarga de:
+- Gestión de usuarios: registro, login, perfiles
+- Autenticación y autorización
+- Perfiles extendidos de usuario
+- Información personal y estadísticas básicas
+
+Modelos principales:
+- PerfilUsuario: Información extendida del usuario (puntuación, nivel, etc.)
+
+Trabaja en conjunto con las apps "retos" y "juego" para proporcionar
+la base de usuarios del sistema.
+"""
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
