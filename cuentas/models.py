@@ -54,4 +54,6 @@ class PerfilUsuario(models.Model):
 def crear_perfil_usuario(sender, instance, created, **kwargs):
     """Crea automáticamente un perfil cuando se crea un usuario"""
     if created:
-        PerfilUsuario.objects.create(usuario=instance)
+        # Verificar si ya existe un perfil para evitar duplicados
+        if not hasattr(instance, 'perfil'):
+            PerfilUsuario.objects.create(usuario=instance)

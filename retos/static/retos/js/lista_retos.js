@@ -1,55 +1,39 @@
 /**
- * JavaScript para la lista de retos
- * Maneja el filtrado automático y la limpieza de filtros
+ * JavaScript para la lista de retos - VERSIÓN 2
+ * Maneja el filtrado y la limpieza de filtros
  */
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Auto-filtrar cuando cambien los selects
-    const dificultadSelect = document.getElementById('dificultad');
-    const categoriaSelect = document.getElementById('categoria');
-    const ordenSelect = document.getElementById('orden');
-    
-    function autoFiltrar() {
-        // Crear un pequeño delay para evitar múltiples requests
-        setTimeout(() => {
-            document.querySelector('form').submit();
-        }, 300);
-    }
-    
-    if (dificultadSelect) {
-        dificultadSelect.addEventListener('change', autoFiltrar);
-    }
-    
-    if (categoriaSelect) {
-        categoriaSelect.addEventListener('change', autoFiltrar);
-    }
-    
-    if (ordenSelect) {
-        ordenSelect.addEventListener('change', autoFiltrar);
-    }
-    
-    // Para el campo de búsqueda, usar debounce
-    const busquedaInput = document.getElementById('busqueda');
-    let busquedaTimeout;
-    
-    if (busquedaInput) {
-        busquedaInput.addEventListener('input', function() {
-            clearTimeout(busquedaTimeout);
-            busquedaTimeout = setTimeout(() => {
-                document.querySelector('form').submit();
-            }, 1000); // Esperar 1 segundo después de que el usuario deje de escribir
-        });
-    }
-});
+console.log('=== CARGANDO LISTA RETOS JS V2 ===');
 
-// Función para limpiar filtros
+// Función para limpiar filtros - VERSIÓN SIMPLE
 function limpiarFiltros() {
-    document.getElementById('busqueda').value = '';
-    document.getElementById('dificultad').value = '';
-    document.getElementById('categoria').value = '';
-    document.getElementById('orden').value = 'fecha';
-    document.querySelector('form').submit();
+    console.log('=== LIMPIANDO FILTROS V2 ===');
+    
+    // Redirigir directamente a la URL limpia
+    const currentOrigin = window.location.origin;
+    const retosUrl = currentOrigin + '/retos/';
+    
+    console.log('URL actual:', window.location.href);
+    console.log('URL destino:', retosUrl);
+    
+    // Usar replace para no crear entrada en el historial
+    window.location.replace(retosUrl);
 }
+
+// Event listeners cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('=== DOM CARGADO - V2 ===');
+    
+    // Verificar que los botones existen
+    const btnLimpiar = document.getElementById('btn-limpiar');
+    const btnLimpiarTodos = document.getElementById('btn-limpiar-todos');
+    
+    console.log('Botón limpiar encontrado:', !!btnLimpiar);
+    console.log('Botón limpiar todos encontrado:', !!btnLimpiarTodos);
+    
+    // NO agregar event listeners adicionales
+    // Los botones ya tienen onclick="limpiarFiltros()"
+});
 
 // Función para mostrar/ocultar filtros avanzados
 function toggleFiltrosAvanzados() {

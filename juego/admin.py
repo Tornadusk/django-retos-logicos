@@ -62,9 +62,13 @@ class RankingAdmin(admin.ModelAdmin):
         Ranking.actualizar_ranking()
         self.message_user(request, 'Ranking actualizado correctamente.')
     actualizar_ranking_manual.short_description = "Actualizar ranking manualmente"
+    actualizar_ranking_manual.allowed_permissions = ('view',)
     
     def has_add_permission(self, request):
         return False  # El ranking se actualiza automáticamente
     
     def has_change_permission(self, request, obj=None):
         return False  # El ranking se actualiza automáticamente
+
+    def has_delete_permission(self, request, obj=None):
+        return False  # Bloquear borrado del ranking

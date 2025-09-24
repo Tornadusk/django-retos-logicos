@@ -124,6 +124,10 @@ class ListaRetosView(ListView):
         context['categorias'] = Categoria.objects.all()
         context['dificultades'] = Reto.DIFICULTAD_CHOICES
         
+        # Agregar timestamp para cache busting del JavaScript
+        import time
+        context['timestamp'] = int(time.time())
+        
         # Si el usuario está logueado, marcar qué retos ya intentó
         if self.request.user.is_authenticated:
             retos_intentados = Intento.objects.filter(

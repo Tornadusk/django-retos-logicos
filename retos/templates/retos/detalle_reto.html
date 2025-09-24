@@ -89,20 +89,12 @@ orles {% extends 'base/base.html' %}
                 {% endif %}
                 
                 {% if not ya_intentado or not agoto_intentos and not resolvio_reto %}
-                    <!-- Mostrar ejemplos de respuestas si existen -->
-                    {% if reto.respuestas_alternativas.exists %}
+                    {% if reto.ejemplo_entrada %}
                         <div class="alert alert-info">
-                            <h6><i class="fas fa-lightbulb"></i> Ejemplos de respuestas válidas:</h6>
-                            <ul class="mb-0">
-                                {% for alt in reto.respuestas_alternativas.all %}
-                                    {% if alt.activa %}
-                                        <li><em>{{ alt.texto }}</em>{% if alt.descripcion %} - {{ alt.descripcion }}{% endif %}</li>
-                                    {% endif %}
-                                {% endfor %}
-                            </ul>
+                            <h6><i class="fas fa-lightbulb"></i> Ejemplo de formato de respuesta:</h6>
+                            <p class="mb-0">{{ reto.ejemplo_entrada|linebreaks }}</p>
                         </div>
                     {% endif %}
-                    
                     <form method="post" action="{% url 'retos:intentar_reto' reto.pk %}">
                         {% csrf_token %}
                         <div class="mb-3">

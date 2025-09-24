@@ -1,0 +1,37 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls %}
+
+{% block content %}
+  <div class="module">
+    <h1>{{ title }}</h1>
+    <div class="fieldset">
+      <h2>Información del usuario</h2>
+      <div class="form-row"><strong>Username:</strong> {{ original.username }}</div>
+      <div class="form-row"><strong>Nombre:</strong> {{ original.first_name }}</div>
+      <div class="form-row"><strong>Apellido:</strong> {{ original.last_name }}</div>
+      <div class="form-row"><strong>Email:</strong> {{ original.email }}</div>
+      <div class="form-row"><strong>Activo:</strong> {{ original.is_active }}</div>
+      <div class="form-row"><strong>Staff:</strong> {{ original.is_staff }}</div>
+      <div class="form-row"><strong>Superuser:</strong> {{ original.is_superuser }}</div>
+      <div class="form-row"><strong>Último login:</strong> {{ original.last_login|default:"-" }}</div>
+      <div class="form-row"><strong>Fecha de alta:</strong> {{ original.date_joined }}</div>
+    </div>
+
+    {% if original.perfil %}
+    <div class="fieldset">
+      <h2>Perfil de Usuario</h2>
+      <div class="form-row"><strong>Nivel:</strong> {{ original.perfil.nivel }}</div>
+      <div class="form-row"><strong>Puntuación total:</strong> {{ original.perfil.puntuacion_total }}</div>
+      <div class="form-row"><strong>Retos completados:</strong> {{ original.perfil.retos_completados }}</div>
+      <div class="form-row"><strong>Fecha registro:</strong> {{ original.perfil.fecha_registro }}</div>
+    </div>
+    {% endif %}
+
+    <p>
+      <a class="button" href="{% url 'admin:auth_user_change' original.pk %}">{% trans 'Editar' %}</a>
+      <a class="button" href="{% url 'admin:auth_user_changelist' %}">{% trans 'Volver al listado' %}</a>
+    </p>
+  </div>
+{% endblock %}
+
+

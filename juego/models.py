@@ -28,6 +28,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from retos.models import Reto
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 
 class Intento(models.Model):
     """Modelo para registrar los intentos de los usuarios en los retos"""
@@ -129,3 +131,14 @@ class Ranking(models.Model):
                 ranking.puntuacion_total = perfil.puntuacion_total
                 ranking.retos_completados = perfil.retos_completados
                 ranking.save()
+
+
+# Si se borra un intento individual, actualizar el perfil del usuario y el ranking
+@receiver(post_delete, sender=Intento)
+def intento_post_delete_update_profile(sender, instance: Intento, **kwargs):
+    try:
+        if hasattr(instance.usuario, 'perfil'):
+            instance.usuario.perfil.actualizar_puntuacion()
+        Ranking.actualizar_ranking()
+    except Exception:
+        pass

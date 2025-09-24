@@ -53,12 +53,16 @@ RetosLógicoMatemáticos/
    python manage.py createsuperuser
    ```
 
-6. **Cargar datos de ejemplo (opcional)**
+6. **Cargar datos de ejemplo (opcional – NO es una migración automática)**
    ```bash
    python manage.py loaddata fixtures/datos_ejemplo.json
    ```
    
-   **Nota**: Los datos de ejemplo incluyen:
+   - Esto no se ejecuta con `migrate`. Es una fixture y debes cargarla manualmente con `loaddata` si quieres partir con información precargada.
+   - Útil para tener retos/categorías/ordenamientos de ejemplo en un entorno nuevo.
+   - Recomendado hacerlo sobre una base vacía (recién creada) para evitar duplicados. Si necesitas reiniciar, puedes usar `python manage.py flush` y volver a cargar la fixture.
+   
+   **Qué incluye la fixture**:
    - 6 categorías de retos (Lógica, Matemáticas, Secuencias, etc.)
    - 12 retos con diferentes dificultades
    - 3 configuraciones de ordenamiento
@@ -86,6 +90,59 @@ RetosLógicoMatemáticos/
 5. **Ver estadísticas** del sistema en "Ver Estadísticas"
 6. **Generar reportes** en "Ver Reportes"
 
+## Guía del Panel de Administración
+
+### Consejos rápidos de navegación
+- En varias listas, puedes hacer clic en determinadas columnas para ir directo a la edición del registro:
+  - Users → columna **Username**.
+  - Juego → Intentos → columna **Usuario**.
+  - Juego → Rankings → columna **Posición**.
+  - Retos → Categorías → columna **Nombre**.
+  - Retos → Retos → columna **Título**.
+- Acciones masivas (Actions): marca los checkboxes, elige la acción en el selector (por ejemplo, "Cambiar número de intentos"), y pulsa **Go**. Verás un indicador tipo "Go 1 of 12 selected" antes de confirmar y aplicar.
+
+### Usuarios (Authentication and Authorization → Users)
+- **Vista de lista**: muestra columnas con puntuación y nivel (desde el perfil) y un botón `Ver` por usuario.
+- **Botón "Ver"**: abre una vista de solo lectura del usuario y su perfil (sin campos editables). Desde ahí puedes ir a `Edit user` si tienes permisos.
+- **Protección de auto-borrado**: el usuario autenticado no puede eliminarse a sí mismo.
+- **Eliminación masiva**: existe la acción personalizada "Eliminar usuarios seleccionados (excluye al usuario actual)", que omite tu propio usuario.
+- **Comportamiento de Guardar en "Add user"**: tras guardar, Django te redirige a la página de edición del usuario creado. `Save` y `Save and continue editing` pueden redirigir al mismo lugar: es el comportamiento estándar de Django.
+   
+### Perfiles de Usuario (Cuentas → Perfiles de Usuario)
+- **Lectura principalmente**: el listado es informativo, sin acciones masivas de puntuación.
+- **Altas**: los perfiles se crean automáticamente cuando se crea un usuario. No se permite crear perfiles duplicados.
+- **Edición**: los campos de estadísticas (`puntuacion_total`, `retos_completados`, `fecha_registro`) son de solo lectura. La gestión principal de usuarios se hace desde `Users`.
+
+### Juego (Intentos y Rankings)
+- **Intentos**:
+  - Vista de lista de intentos de usuarios por reto.
+  - Disponible enlace "Add" para registrar intentos manuales si fuese necesario (generalmente no se usa en operación normal porque los intentos se generan desde el front).
+  - Búsqueda/filtrado por usuario y reto según configuración del admin.
+- **Rankings**:
+  - Vista de lista de posiciones, puntuación y retos completados.
+  - Solo lectura total (sin Add/Change/Delete en el admin).
+  - Acción manual: recálculo de ranking con descripción contextual al pasar el mouse.
+
+### Retos
+- **Campo nuevo `ejemplo_entrada`**: guía de formato para la respuesta del usuario (no revela la solución).
+- **Botones de autocompletado** en el admin para `ejemplo_entrada` (por ejemplo: "Añadir básicos", "Solo mayúscula", "Solo minúscula").
+- **Efectos en puntuaciones**: al borrar un `Reto`, se recalculan automáticamente las puntuaciones y el ranking de los usuarios afectados (señales `pre_delete`/`post_delete`).
+
+### Ranking
+- **Solo lectura total**: no se puede añadir/editar/eliminar entradas manualmente.
+- **Acción manual disponible**: "Recalcula posiciones y puntajes de todos los usuarios en el ranking." para forzar un recálculo cuando lo necesites.
+
+### Reglas automáticas de actualización
+- Al borrar un `Intento`, el perfil del usuario y el `Ranking` se recalculan automáticamente.
+- Al borrar un `Reto`, se recalculan los perfiles de usuarios afectados y luego el `Ranking`.
+
+### Datos de ejemplo (fixtures)
+- Si quieres ver el panel con datos precargados (categorías, retos, configuraciones), carga la fixture:
+  ```bash
+  python manage.py loaddata fixtures/datos_ejemplo.json
+  ```
+  Recomendado sobre una base vacía (o tras `python manage.py flush`). Esto no es una migración y no se ejecuta con `migrate`.
+
 ### Configuración del Sistema de Ordenamiento:
 
 #### Como Admin:
@@ -98,8 +155,8 @@ RetosLógicoMatemáticos/
 #### Configurar retos individuales:
 1. **Ir a**: Admin → Retos
 2. **Editar reto** específico
-3. **Establecer prioridad**: número mayor = más arriba
-4. **Marcar aleatorio**: para mostrar en orden aleatorio
+3. **Establecer prioridad**: Admin → Retos → editar → sección "Orden y Visibilidad" → campo `orden_prioridad` (número mayor = más arriba). Para ver el efecto, usa el selector "Ordenar por → Prioridad" en la lista de retos o fija el orden por defecto en Admin → Configuraciones de Ordenamiento.
+4. **Marcar aleatorio**: Admin → Retos → editar → sección "Orden y Visibilidad" → activar `mostrar_aleatorio` (incluye el reto cuando el orden sea aleatorio y la configuración lo permita).
 5. **Guardar cambios**
 
 #### Como Usuario:
@@ -143,7 +200,7 @@ RetosLógicoMatemáticos/
 ## Fixtures (Datos de Ejemplo)
 
 ### ¿Qué son las fixtures?
-Las fixtures son archivos que contienen datos de ejemplo para poblar la base de datos. Son útiles para:
+Las fixtures son archivos que contienen datos de ejemplo para poblar la base de datos. A diferencia de las **migraciones**, no se aplican automáticamente con `migrate`. Debes cargarlas explícitamente con `loaddata`. Son útiles para:
 - Probar el sistema sin crear datos manualmente
 - Configurar el sistema con información básica
 - Tener datos consistentes entre desarrolladores
@@ -154,6 +211,7 @@ Las fixtures son archivos que contienen datos de ejemplo para poblar la base de 
 ```bash
 python manage.py loaddata fixtures/datos_ejemplo.json
 ```
+> Nota: Esto añade registros de ejemplo (categorías, retos, configuraciones). Si ya tenías datos, podrías duplicar entradas; en ese caso reinicia con `python manage.py flush` antes de cargar.
 
 #### Crear nuevas fixtures:
 ```bash

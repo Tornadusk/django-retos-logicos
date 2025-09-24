@@ -27,13 +27,13 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <form method="get" class="row g-3">
-                    <div class="col-md-4">
+                <form method="get" action="{% url 'retos:lista_retos' %}" class="row g-3">
+                    <div class="col-md-3">
                         <label for="busqueda" class="form-label">Buscar</label>
                         <input type="text" class="form-control" id="busqueda" name="busqueda" 
                                value="{{ request.GET.busqueda }}" placeholder="Buscar retos...">
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label for="dificultad" class="form-label">Dificultad</label>
                         <select class="form-select" id="dificultad" name="dificultad">
                             <option value="">Todas</option>
@@ -44,7 +44,7 @@
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label for="categoria" class="form-label">Categoría</label>
                         <select class="form-select" id="categoria" name="categoria">
                             <option value="">Todas</option>
@@ -78,14 +78,14 @@
                             </option>
                         </select>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <label class="form-label">&nbsp;</label>
-                        <div>
+                        <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-search"></i> Filtrar
                             </button>
-                            <button type="button" class="btn btn-outline-secondary ms-2" onclick="limpiarFiltros()">
-                                <i class="fas fa-times"></i> Limpiar
+                            <button type="button" class="btn btn-outline-secondary" onclick="limpiarFiltros()" id="btn-limpiar">
+                                <i class="fas fa-times"></i> Limpiar filtros
                             </button>
                         </div>
                     </div>
@@ -117,9 +117,6 @@
             {% if request.GET.orden and request.GET.orden != 'fecha' %}
                 <span class="badge bg-secondary me-1">Orden: {{ request.GET.orden|title }}</span>
             {% endif %}
-            <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="limpiarFiltros()">
-                <i class="fas fa-times"></i> Limpiar todos
-            </button>
         </div>
     </div>
 </div>
@@ -223,6 +220,6 @@
 {% endif %}
 
 {% block extra_js %}
-<script src="{% static 'retos/js/lista_retos.js' %}"></script>
+<script src="{% static 'retos/js/lista_retos.js' %}?v={{ timestamp|default:'1' }}"></script>
 {% endblock %}
 {% endblock %}

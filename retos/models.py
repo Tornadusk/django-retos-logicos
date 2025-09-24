@@ -20,6 +20,8 @@ Trabaja en conjunto con la app "juego" que maneja la interacción del usuario.
 """
 
 from django.db import models
+from django.db.models.signals import pre_delete, post_delete
+from django.dispatch import receiver
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 import re
@@ -59,6 +61,7 @@ class Reto(models.Model):
     enunciado = models.TextField(help_text="Enunciado completo del problema")
     respuesta_correcta = models.TextField(help_text="Respuesta correcta")
     explicacion = models.TextField(blank=True, help_text="Explicación de la solución")
+    ejemplo_entrada = models.TextField(blank=True, help_text="Ejemplo de cómo escribir la respuesta (no revela la solución)")
     
     # Clasificación
     categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True, blank=True)
@@ -247,3 +250,38 @@ class ConfiguracionOrdenamiento(models.Model):
             return cls.objects.filter(activo=True).first()
         except:
             return None
+
+
+# ======== Señales para mantener perfiles y ranking coherentes al borrar Retos ========
+@receiver(pre_delete, sender=Reto)
+def reto_pre_delete_collect_users(sender, instance: Reto, **kwargs):
+    """Antes de borrar un reto, recolectar los usuarios con intentos para actualizar luego."""
+    try:
+        from juego.models import Intento
+        user_ids = list(
+            Intento.objects.filter(reto=instance)
+            .values_list('usuario_id', flat=True)
+            .distinct()
+        )
+        instance._affected_user_ids = user_ids
+    except Exception:
+        instance._affected_user_ids = []
+
+
+@receiver(post_delete, sender=Reto)
+def reto_post_delete_update_profiles(sender, instance: Reto, **kwargs):
+    """Después de borrar un reto, actualizar perfiles de usuarios afectados y ranking."""
+    try:
+        from cuentas.models import PerfilUsuario
+        from juego.models import Ranking
+
+        user_ids = getattr(instance, '_affected_user_ids', []) or []
+        if user_ids:
+            perfiles = PerfilUsuario.objects.filter(usuario_id__in=user_ids)
+            for perfil in perfiles:
+                perfil.actualizar_puntuacion()
+        # Refrescar ranking global una sola vez
+        Ranking.actualizar_ranking()
+    except Exception:
+        # En caso de error, no bloquear el borrado
+        pass

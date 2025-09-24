@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django import forms
 from django.utils.html import format_html
 from django.db.models import Count
 from .models import Categoria, Reto, ConfiguracionOrdenamiento, RespuestaAlternativa
@@ -31,9 +32,19 @@ class RespuestaAlternativaInline(admin.TabularInline):
     ordering = ['fecha_creacion']
 
 
+class RetoAdminForm(forms.ModelForm):
+    class Meta:
+        model = Reto
+        fields = '__all__'
+        widgets = {
+            'ejemplo_entrada': forms.Textarea(attrs={'rows': 4}),
+        }
+
+
 class RetoAdmin(admin.ModelAdmin):
-    list_display = ['titulo', 'categoria', 'dificultad_badge', 'puntos', 'max_intentos', 'activo_badge', 'tasa_exito', 'fecha_creacion']
-    list_filter = ['dificultad', 'categoria', 'activo', 'max_intentos', 'fecha_creacion']
+    form = RetoAdminForm
+    list_display = ['titulo', 'categoria', 'dificultad_badge', 'puntos', 'orden_prioridad', 'mostrar_aleatorio', 'max_intentos', 'activo_badge', 'tasa_exito', 'fecha_creacion']
+    list_filter = ['dificultad', 'categoria', 'activo', 'mostrar_aleatorio', 'max_intentos', 'fecha_creacion']
     search_fields = ['titulo', 'descripcion', 'enunciado']
     ordering = ['-fecha_creacion']
     readonly_fields = ['fecha_creacion', 'fecha_modificacion', 'intentos_totales', 'intentos_exitosos', 'tasa_exito_calculada']
@@ -53,13 +64,14 @@ class RetoAdmin(admin.ModelAdmin):
             '''
         }),
         ('Contenido del Reto', {
-            'fields': ('enunciado', 'respuesta_correcta', 'explicacion'),
+            'fields': ('enunciado', 'respuesta_correcta', 'explicacion', 'ejemplo_entrada'),
             'description': '''
             <div style="background: #f8f9fa; padding: 10px; border-left: 4px solid #28a745; margin: 10px 0;">
                 <strong>🎯 CAMPOS DE VALIDACIÓN:</strong><br>
                 • <strong>enunciado:</strong> El problema completo que debe resolver el usuario<br>
                 • <strong>respuesta_correcta:</strong> La respuesta principal que valida el sistema (ej: "blanco")<br>
-                • <strong>explicacion:</strong> Explicación de la solución que se muestra al usuario
+                • <strong>explicacion:</strong> Explicación de la solución que se muestra al usuario<br>
+                • <strong>ejemplo_entrada:</strong> Ejemplo genérico de cómo escribir la respuesta (no debe revelar la solución)
             </div>
             '''
         }),
@@ -78,6 +90,10 @@ class RetoAdmin(admin.ModelAdmin):
             'fields': ('max_intentos',),
             'description': 'Número máximo de intentos permitidos por usuario para este reto'
         }),
+        ('Orden y Visibilidad', {
+            'fields': ('orden_prioridad', 'mostrar_aleatorio'),
+            'description': 'Mayor prioridad = aparece más arriba cuando el orden es por prioridad. "Mostrar aleatorio" habilita su inclusión en listados aleatorios.'
+        }),
         ('Configuración General', {
             'fields': ('activo', 'creado_por')
         }),
@@ -90,6 +106,9 @@ class RetoAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+
+    class Media:
+        js = ('retos/js/admin_ejemplo_entrada.js',)
     
     def dificultad_badge(self, obj):
         colors = {
