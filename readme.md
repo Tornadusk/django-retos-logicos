@@ -47,6 +47,35 @@ RetosLógicoMatemáticos/
    cd django-retos-logicos
    ```
 
+   Si no tienes Git, tienes dos alternativas:
+
+   - Alternativa A (sin Git): Descargar ZIP
+     1) Abre el repo: https://github.com/Tornadusk/django-retos-logicos
+     2) Botón "Code" → "Download ZIP"
+     3) Descomprime el ZIP en tu carpeta de trabajo (Windows: C:\Proyectos, Linux/Mac: ~/projects)
+     4) Abre la terminal y entra a la carpeta del proyecto descomprimido
+
+   - Alternativa B (instalar Git y clonar)
+     - Windows: instala "Git for Windows" y luego ejecuta:
+       ```bash
+       cd "C:\Proyectos"
+       git clone https://github.com/Tornadusk/django-retos-logicos.git
+       cd django-retos-logicos
+       ```
+     - macOS: instala Command Line Tools (xcode-select --install) o Homebrew; con Git disponible:
+       ```bash
+       cd ~/projects
+       git clone https://github.com/Tornadusk/django-retos-logicos.git
+       cd django-retos-logicos
+       ```
+     - Linux (Debian/Ubuntu):
+       ```bash
+       sudo apt update && sudo apt install -y git
+       cd ~/projects
+       git clone https://github.com/Tornadusk/django-retos-logicos.git
+       cd django-retos-logicos
+       ```
+
 2. **Crear entorno virtual**
    ```bash
    python -m venv venv
