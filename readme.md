@@ -41,6 +41,12 @@ RetosLógicoMatemáticos/
      - Explicado simple: abre la aplicación "Terminal". Copia y pega la línea de arriba y pulsa Enter. Crea (si no existe) y entra en una carpeta llamada `projects` dentro de tu carpeta personal.
      - Comprobar que estás dentro: escribe `ls` y pulsa Enter. Verás el listado de archivos de esa carpeta.
 
+   - Si usas Ubuntu/Debian y no tienes Git/Python instalados, ejecútalo primero:
+     ```bash
+     sudo apt update
+     sudo apt install -y git python3 python3-venv python3-pip
+     ```
+
 1. **Clonar el repositorio**
    ```bash
    git clone https://github.com/Tornadusk/django-retos-logicos.git
