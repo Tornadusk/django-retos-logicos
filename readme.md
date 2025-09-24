@@ -82,6 +82,23 @@ RetosLógicoMatemáticos/
 4. **Cambiar ordenamiento** usando el selector "Ordenar por"
 5. **Ver estadísticas** en el dashboard personal
 
+### Registro e inicio de sesión (flujo de usuario común)
+- **Registro** (`http://127.0.0.1:8000/cuentas/registro/`):
+  - Completa nombre, apellido, usuario, email y contraseña.
+  - Al enviar, se crea el usuario y se inicia sesión automáticamente.
+  - Se crea el `PerfilUsuario` de forma automática (señal post_save) y se actualiza el `Ranking`.
+  - Redirección al `Dashboard`.
+- **Inicio de sesión** (`http://127.0.0.1:8000/cuentas/login/`):
+  - Puedes ingresar con **usuario o email** y contraseña.
+  - Muestra mensaje de bienvenida y redirige a `LOGIN_REDIRECT_URL` (Dashboard).
+- **Perfil** (`/cuentas/perfil/`):
+  - Permite editar nombre, apellido y email del usuario autenticado.
+  - Muestra estadísticas (puntuación, retos completados, nivel, fecha registro) y accesos rápidos.
+- **Cambio de contraseña** (`/cuentas/cambiar_password/`):
+  - Usuarios normales cambian la contraseña desde aquí.
+  - Si eres admin (`is_staff`), el cambio se realiza desde el panel de administración (se redirige ahí).
+- **Cerrar sesión**: disponible en la barra superior (formulario POST protegido con CSRF en `base/base.html`).
+
 ### Para Administradores:
 1. **Admin panel**: http://127.0.0.1:8000/admin/
 2. **Gestionar retos** desde el panel de administración
@@ -106,6 +123,7 @@ RetosLógicoMatemáticos/
 - **Botón "Ver"**: abre una vista de solo lectura del usuario y su perfil (sin campos editables). Desde ahí puedes ir a `Edit user` si tienes permisos.
 - **Protección de auto-borrado**: el usuario autenticado no puede eliminarse a sí mismo.
 - **Eliminación masiva**: existe la acción personalizada "Eliminar usuarios seleccionados (excluye al usuario actual)", que omite tu propio usuario.
+- **Crear usuario (admin)**: http://127.0.0.1:8000/admin/auth/user/add/
 - **Botones de Guardado (Add user y Change user)**:
   - `Save` (Add user): crea el usuario y redirige a la página de edición del usuario recién creado (`.../change/`).
   - `Save and continue editing` (Add user): crea el usuario y también te deja en `.../change/` (mismo destino que `Save` en el alta; comportamiento estándar de Django).
