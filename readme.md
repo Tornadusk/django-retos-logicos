@@ -98,6 +98,16 @@ RetosLógicoMatemáticos/
    pip install -r requirements.txt
    ```
 
+   Alternativa rápida (mínima) si solo quieres poner a andar el servidor:
+   ```bash
+   # Windows
+   pip install django
+
+   # Linux/Mac
+   pip3 install django
+   ```
+   Nota: esta alternativa instala solo Django. Para todas las funcionalidades del proyecto (admin personalizado, estáticos, etc.) usa siempre `requirements.txt`.
+
 4. **Configurar base de datos**
    ```bash
    python manage.py makemigrations
