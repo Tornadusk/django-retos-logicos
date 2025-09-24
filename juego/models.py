@@ -25,7 +25,7 @@ retos (contenido) ←→ juego (interacción)
 """
 
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.utils import timezone
 from retos.models import Reto
 from django.db.models.signals import post_delete
@@ -33,7 +33,7 @@ from django.dispatch import receiver
 
 class Intento(models.Model):
     """Modelo para registrar los intentos de los usuarios en los retos"""
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='intentos')
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='intentos')
     reto = models.ForeignKey(Reto, on_delete=models.CASCADE, related_name='intentos')
     respuesta_usuario = models.TextField()
     es_correcto = models.BooleanField(default=False)
@@ -94,7 +94,7 @@ class Intento(models.Model):
 
 class Ranking(models.Model):
     """Modelo para el ranking de usuarios"""
-    usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='ranking')
+    usuario = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='ranking')
     posicion = models.IntegerField()
     puntuacion_total = models.IntegerField(default=0)
     retos_completados = models.IntegerField(default=0)

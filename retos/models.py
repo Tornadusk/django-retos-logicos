@@ -22,7 +22,7 @@ Trabaja en conjunto con la app "juego" que maneja la interacción del usuario.
 from django.db import models
 from django.db.models.signals import pre_delete, post_delete
 from django.dispatch import receiver
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
 import re
 
@@ -71,7 +71,7 @@ class Reto(models.Model):
     # Metadatos
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_modificacion = models.DateTimeField(auto_now=True)
-    creado_por = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    creado_por = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     activo = models.BooleanField(default=True)
     
     # Control de ordenamiento

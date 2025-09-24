@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.html import format_html
 from django.urls import path
@@ -60,6 +60,7 @@ class CustomAdminSite(admin.AdminSite):
 admin_site = CustomAdminSite(name='custom_admin')
 
 # Registrar todos los modelos en el admin personalizado
+User = get_user_model()
 admin_site.register(User, UserAdmin)
 admin_site.register(PerfilUsuario, PerfilUsuarioAdmin)
 admin_site.register(Reto, RetoAdmin)

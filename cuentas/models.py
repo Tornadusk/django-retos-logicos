@@ -16,13 +16,20 @@ la base de usuarios del sistema.
 """
 
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+class User(AbstractUser):
+    """Modelo de usuario personalizado basado en AbstractUser.
+    Espacio para futuros campos adicionales.
+    """
+    pass
+
 class PerfilUsuario(models.Model):
     """Perfil extendido del usuario para el sistema de retos"""
-    usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil')
+    usuario = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='perfil')
     fecha_registro = models.DateTimeField(auto_now_add=True)
     puntuacion_total = models.IntegerField(default=0)
     nivel = models.IntegerField(default=1)

@@ -16,11 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
 from .admin_config import admin_site
 
 urlpatterns = [
+    # Compat: rutas antiguas del admin cuando se usaba auth.User (deben ir ANTES del include del admin)
+    path('admin/auth/user/add/', RedirectView.as_view(url='/admin/cuentas/user/add/', permanent=False)),
+    path('admin/auth/user/', RedirectView.as_view(url='/admin/cuentas/user/', permanent=False)),
     path('admin/', admin_site.urls),
     path('', include('retos.urls')),
     path('juego/', include('juego.urls')),

@@ -106,7 +106,7 @@ RetosLógicoMatemáticos/
    # Linux/Mac
    pip3 install django
    ```
-   Nota: esta alternativa instala solo Django. Para todas las funcionalidades del proyecto (admin personalizado, estáticos, etc.) usa siempre `requirements.txt`.
+
 
 4. **Configurar base de datos**
    ```bash
@@ -184,22 +184,24 @@ RetosLógicoMatemáticos/
   - Retos → Retos → columna **Título**.
 - Acciones masivas (Actions): marca los checkboxes, elige la acción en el selector (por ejemplo, "Cambiar número de intentos"), y pulsa **Go**. Verás un indicador tipo "Go 1 of 12 selected" antes de confirmar y aplicar.
 
-### Usuarios (Authentication and Authorization → Users)
-- **Vista de lista**: muestra columnas con puntuación y nivel (desde el perfil) y un botón `Ver` por usuario.
-- **Botón "Ver"**: abre una vista de solo lectura del usuario y su perfil (sin campos editables). Desde ahí puedes ir a `Edit user` si tienes permisos.
-- **Protección de auto-borrado**: el usuario autenticado no puede eliminarse a sí mismo.
-- **Eliminación masiva**: existe la acción personalizada "Eliminar usuarios seleccionados (excluye al usuario actual)", que omite tu propio usuario.
-- **Crear usuario (admin)**: http://127.0.0.1:8000/admin/auth/user/add/
-- **Botones de Guardado (Add user y Change user)**:
-  - `Save` (Add user): crea el usuario y redirige a la página de edición del usuario recién creado (`.../change/`).
-  - `Save and continue editing` (Add user): crea el usuario y también te deja en `.../change/` (mismo destino que `Save` en el alta; comportamiento estándar de Django).
-  - `Save and continue editing` (Change user): guarda los cambios y permanece en la misma página de edición para seguir editando.
-  - `Save and add another` (Add user): guarda el usuario actual y te abre de inmediato un nuevo formulario en blanco para crear otro usuario.
-   
-### Perfiles de Usuario (Cuentas → Perfiles de Usuario)
-- **Lectura principalmente**: el listado es informativo, sin acciones masivas de puntuación.
-- **Altas**: los perfiles se crean automáticamente cuando se crea un usuario. No se permite crear perfiles duplicados.
-- **Edición**: los campos de estadísticas (`puntuacion_total`, `retos_completados`, `fecha_registro`) son de solo lectura. La gestión principal de usuarios se hace desde `Users`.
+### Cuentas (Cuentas → Users y Perfiles de Usuario)
+- **Users (CustomUser)**: 
+  - **Modelo personalizado**: Usa `cuentas.User` (CustomUser) en lugar del modelo estándar de Django.
+  - **Vista de lista**: muestra columnas con puntuación y nivel (desde el perfil) y un botón `Ver` por usuario.
+  - **Botón "Ver"**: abre una vista de solo lectura del usuario y su perfil (sin campos editables). Desde ahí puedes ir a `Edit user` si tienes permisos.
+  - **Protección de auto-borrado**: el usuario autenticado no puede eliminarse a sí mismo.
+  - **Eliminación masiva**: existe la acción personalizada "Eliminar usuarios seleccionados (excluye al usuario actual)", que omite tu propio usuario.
+  - **Crear usuario (admin)**: http://127.0.0.1:8000/admin/cuentas/user/add/
+  - **Botones de Guardado (Add user y Change user)**:
+    - `Save` (Add user): crea el usuario y redirige a la página de edición del usuario recién creado (`.../change/`).
+    - `Save and continue editing` (Add user): crea el usuario y también te deja en `.../change/` (mismo destino que `Save` en el alta; comportamiento estándar de Django).
+    - `Save and continue editing` (Change user): guarda los cambios y permanece en la misma página de edición para seguir editando.
+    - `Save and add another` (Add user): guarda el usuario actual y te abre de inmediato un nuevo formulario en blanco para crear otro usuario.
+
+- **Perfiles de Usuario**:
+  - **Lectura principalmente**: el listado es informativo, sin acciones masivas de puntuación.
+  - **Altas**: los perfiles se crean automáticamente cuando se crea un usuario. No se permite crear perfiles duplicados.
+  - **Edición**: los campos de estadísticas (`puntuacion_total`, `retos_completados`, `fecha_registro`) son de solo lectura. La gestión principal de usuarios se hace desde `Users`.
 
 ### Juego (Intentos y Rankings)
 - **Intentos**:

@@ -128,3 +128,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGIN_URL = '/cuentas/login/'
 LOGOUT_REDIRECT_URL = '/'
+
+# Custom user model
+AUTH_USER_MODEL = 'cuentas.User'

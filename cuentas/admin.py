@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.utils.html import format_html
 from django.urls import path, reverse
 from django.template.response import TemplateResponse
@@ -48,7 +48,11 @@ class UserAdmin(BaseUserAdmin):
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
-            path('<path:object_id>/view/', self.admin_site.admin_view(self.user_view), name='auth_user_view'),
+            path(
+                '<path:object_id>/view/',
+                self.admin_site.admin_view(self.user_view),
+                name=f"{self.model._meta.app_label}_{self.model._meta.model_name}_view",
+            ),
         ]
         return custom_urls + urls
 
@@ -64,7 +68,10 @@ class UserAdmin(BaseUserAdmin):
         return TemplateResponse(request, 'admin/cuentas/user_view.html', context)
 
     def view_action(self, obj):
-        url = reverse('admin:auth_user_view', args=[obj.pk])
+        url = reverse(
+            f"admin:{self.model._meta.app_label}_{self.model._meta.model_name}_view",
+            args=[obj.pk],
+        )
         return format_html('<a class="button" href="{}">Ver</a>', url)
     view_action.short_description = 'Ver'
     view_action.allow_tags = True
@@ -81,8 +88,12 @@ class UserAdmin(BaseUserAdmin):
         return format_html('<span style="color: #6c757d;">N/A</span>')
     get_nivel.short_description = 'Nivel'
 
-# Re-register UserAdmin
-admin.site.unregister(User)
+# Re-register UserAdmin con el modelo swappeado
+User = get_user_model()
+try:
+    admin.site.unregister(User)
+except Exception:
+    pass
 admin.site.register(User, UserAdmin)
 
 class PerfilUsuarioAdmin(admin.ModelAdmin):
@@ -108,7 +119,7 @@ class PerfilUsuarioAdmin(admin.ModelAdmin):
         form = super().get_form(request, obj, **kwargs)
         # Si estamos creando un nuevo perfil, filtrar usuarios que ya tienen perfil
         if not obj:
-            form.base_fields['usuario'].queryset = User.objects.filter(perfil__isnull=True)
+            form.base_fields['usuario'].queryset = get_user_model().objects.filter(perfil__isnull=True)
             # Asegurar que el campo nivel sea editable
             if 'nivel' in form.base_fields:
                 form.base_fields['nivel'].widget.attrs['readonly'] = False

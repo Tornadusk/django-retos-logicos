@@ -28,8 +28,8 @@
     {% endif %}
 
     <p>
-      <a class="button" href="{% url 'admin:auth_user_change' original.pk %}">{% trans 'Editar' %}</a>
-      <a class="button" href="{% url 'admin:auth_user_changelist' %}">{% trans 'Volver al listado' %}</a>
+      <a class="button" href="{% url 'admin:cuentas_user_change' original.pk %}">{% trans 'Editar' %}</a>
+      <a class="button" href="{% url 'admin:cuentas_user_changelist' %}">{% trans 'Volver al listado' %}</a>
     </p>
   </div>
 {% endblock %}
