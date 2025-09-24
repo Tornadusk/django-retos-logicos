@@ -24,17 +24,18 @@ RetosLógicoMatemáticos/
 
 ## Instalación
 
-0. **Preparar carpeta y terminal** (Windows)
-   - Crea una carpeta donde guardarás el proyecto, por ejemplo: `C:\Proyectos` o `V:\Base de datos\django`.
-   - Abre la terminal:
-     - Opción 1: Win + R → escribe `cmd` → Enter (para CMD) o busca "PowerShell" en el menú inicio.
-     - Opción 2: En el Explorador de Windows, entra en la carpeta creada y escribe `cmd` en la barra de direcciones → Enter.
-   - Muévete a esa carpeta:
-     ```bash
-     cd "C:\Proyectos"
-     # o
-     cd "V:\Base de datos\django"
-     ```
+0. **Preparar carpeta y terminal**
+   - Windows:
+     - Crea una carpeta genérica, por ejemplo: `C:\Proyectos`.
+     - Abre CMD/PowerShell y muévete a esa carpeta:
+       ```bash
+       cd "C:\Proyectos"
+       ```
+   - Linux/Mac:
+     - Crea y entra a un directorio de trabajo estándar, por ejemplo `~/projects`:
+       ```bash
+       mkdir -p ~/projects && cd ~/projects
+       ```
 
 1. **Clonar el repositorio**
    ```bash
