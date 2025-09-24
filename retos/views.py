@@ -81,6 +81,10 @@ class ListaRetosView(ListView):
     def get_queryset(self):
         queryset = Reto.objects.filter(activo=True).select_related('categoria')
         
+        # Ocultar retos sin categoría a usuarios no administradores
+        if not self.request.user.is_staff:
+            queryset = queryset.filter(categoria__isnull=False)
+
         # Filtros
         dificultad = self.request.GET.get('dificultad')
         categoria = self.request.GET.get('categoria')
