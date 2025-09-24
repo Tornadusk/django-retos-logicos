@@ -84,9 +84,13 @@ RetosLógicoMatemáticos/
 
 2. **Crear entorno virtual**
    ```bash
+   # Windows
    python -m venv venv
-   venv\Scripts\activate  # Windows
-   # source venv/bin/activate  # Linux/Mac
+   venv\Scripts\activate
+
+   # Linux/Mac
+   python3 -m venv venv
+   source venv/bin/activate
    ```
 
 3. **Instalar dependencias**
