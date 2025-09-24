@@ -24,10 +24,22 @@ RetosLógicoMatemáticos/
 
 ## Instalación
 
+0. **Preparar carpeta y terminal** (Windows)
+   - Crea una carpeta donde guardarás el proyecto, por ejemplo: `C:\Proyectos` o `V:\Base de datos\django`.
+   - Abre la terminal:
+     - Opción 1: Win + R → escribe `cmd` → Enter (para CMD) o busca "PowerShell" en el menú inicio.
+     - Opción 2: En el Explorador de Windows, entra en la carpeta creada y escribe `cmd` en la barra de direcciones → Enter.
+   - Muévete a esa carpeta:
+     ```bash
+     cd "C:\Proyectos"
+     # o
+     cd "V:\Base de datos\django"
+     ```
+
 1. **Clonar el repositorio**
    ```bash
-   git clone <url-del-repositorio>
-   cd RetosLógicoMatemáticos
+   git clone https://github.com/Tornadusk/django-retos-logicos.git
+   cd django-retos-logicos
    ```
 
 2. **Crear entorno virtual**
