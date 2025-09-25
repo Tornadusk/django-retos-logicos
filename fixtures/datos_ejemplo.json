@@ -53,7 +53,8 @@
       "orden_prioridad": 0,
       "mostrar_aleatorio": false,
       "intentos_totales": 0,
-      "intentos_exitosos": 0
+      "intentos_exitosos": 0,
+      "icono_por_defecto": "🧩"
     }
   },
   {
@@ -74,7 +75,8 @@
       "orden_prioridad": 0,
       "mostrar_aleatorio": false,
       "intentos_totales": 0,
-      "intentos_exitosos": 0
+      "intentos_exitosos": 0,
+      "icono_por_defecto": "🧮"
     }
   },
   {
@@ -95,7 +97,8 @@
       "orden_prioridad": 0,
       "mostrar_aleatorio": false,
       "intentos_totales": 0,
-      "intentos_exitosos": 0
+      "intentos_exitosos": 0,
+      "icono_por_defecto": "🔢"
     }
   },
   {
@@ -116,7 +119,8 @@
       "orden_prioridad": 0,
       "mostrar_aleatorio": false,
       "intentos_totales": 0,
-      "intentos_exitosos": 0
+      "intentos_exitosos": 0,
+      "icono_por_defecto": "🎨"
     }
   },
   {
@@ -137,7 +141,8 @@
       "orden_prioridad": 0,
       "mostrar_aleatorio": false,
       "intentos_totales": 0,
-      "intentos_exitosos": 0
+      "intentos_exitosos": 0,
+      "icono_por_defecto": "🎲"
     }
   },
   {
@@ -158,7 +163,8 @@
       "orden_prioridad": 5,
       "mostrar_aleatorio": true,
       "intentos_totales": 0,
-      "intentos_exitosos": 0
+      "intentos_exitosos": 0,
+      "icono_por_defecto": "💡"
     }
   },
   {
@@ -179,7 +185,8 @@
       "orden_prioridad": 10,
       "mostrar_aleatorio": false,
       "intentos_totales": 0,
-      "intentos_exitosos": 0
+      "intentos_exitosos": 0,
+      "icono_por_defecto": "🌐"
     }
   },
   {
@@ -272,7 +279,8 @@
       "orden_prioridad": 2,
       "mostrar_aleatorio": false,
       "intentos_totales": 0,
-      "intentos_exitosos": 0
+      "intentos_exitosos": 0,
+      "icono_por_defecto": "🎯"
     }
   },
   {
@@ -293,7 +301,8 @@
       "orden_prioridad": 8,
       "mostrar_aleatorio": true,
       "intentos_totales": 0,
-      "intentos_exitosos": 0
+      "intentos_exitosos": 0,
+      "icono_por_defecto": "🧮"
     }
   },
   {
@@ -314,7 +323,8 @@
       "orden_prioridad": 15,
       "mostrar_aleatorio": false,
       "intentos_totales": 0,
-      "intentos_exitosos": 0
+      "intentos_exitosos": 0,
+      "icono_por_defecto": "🏆"
     }
   },
   {
@@ -335,7 +345,8 @@
       "orden_prioridad": 1,
       "mostrar_aleatorio": true,
       "intentos_totales": 0,
-      "intentos_exitosos": 0
+      "intentos_exitosos": 0,
+      "icono_por_defecto": "🔍"
     }
   }
 ]

@@ -89,6 +89,34 @@ class Reto(models.Model):
         validators=[MinValueValidator(1), MaxValueValidator(10)]
     )
     
+    # Imagen del reto
+    imagen_reto = models.ImageField(
+        upload_to='retos/', 
+        blank=True, 
+        null=True,
+        help_text="Sube una imagen relacionada con el reto (opcional)"
+    )
+    icono_por_defecto = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=[
+            ('🧩', '🧩 Puzzle'),
+            ('🔢', '🔢 Números'),
+            ('🧮', '🧮 Cálculo'),
+            ('🎯', '🎯 Objetivo'),
+            ('💡', '💡 Idea'),
+            ('🎲', '🎲 Dados'),
+            ('📊', '📊 Gráficos'),
+            ('🔍', '🔍 Búsqueda'),
+            ('⚡', '⚡ Rápido'),
+            ('🏆', '🏆 Premio'),
+            ('🎨', '🎨 Arte'),
+            ('🌐', '🌐 Global'),
+        ],
+        help_text="Selecciona un icono por defecto si no tienes imagen personal"
+    )
+    
     class Meta:
         verbose_name = "Reto"
         verbose_name_plural = "Retos"
@@ -190,6 +218,23 @@ class Reto(models.Model):
                 return True
         
         return False
+    
+    def obtener_imagen(self):
+        """Retorna la imagen del reto si existe, o el icono por defecto"""
+        if self.imagen_reto:
+            return self.imagen_reto.url
+        return self.icono_por_defecto or '🧩'
+    
+    def tiene_imagen_personal(self):
+        """Verifica si el reto tiene una imagen personal subida"""
+        return bool(self.imagen_reto)
+    
+    def eliminar_imagen_personal(self):
+        """Elimina la imagen personal del reto"""
+        if self.imagen_reto:
+            self.imagen_reto.delete(save=False)
+            self.imagen_reto = None
+            self.save()
 
 
 class RespuestaAlternativa(models.Model):

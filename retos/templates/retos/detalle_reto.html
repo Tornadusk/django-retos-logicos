@@ -18,6 +18,21 @@ orles {% extends 'base/base.html' %}
 <div class="row">
     <div class="col-md-8">
         <div class="card">
+            <!-- Imagen del reto -->
+            {% if reto.imagen_reto or reto.icono_por_defecto %}
+                <div class="card-img-top-container" style="height: 200px; background: #f8f9fa; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #dee2e6; overflow: hidden;">
+                    {% if reto.imagen_reto %}
+                        <img src="{{ reto.imagen_reto.url }}" alt="{{ reto.titulo }}" 
+                             style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;"
+                             onmouseover="this.style.transform='scale(1.02)'" 
+                             onmouseout="this.style.transform='scale(1)'">
+                    {% else %}
+                        <div style="font-size: 6rem; color: #6c757d;">
+                            {{ reto.obtener_imagen }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
             <div class="card-header">
                 <h2>{{ reto.titulo }}</h2>
                 <div class="mb-2">

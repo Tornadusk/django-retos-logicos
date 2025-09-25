@@ -10,6 +10,7 @@ Sistema web para resolver retos lógicos y matemáticos con sistema de puntuaci�
 - **Ranking de Usuarios**: Clasificación competitiva entre usuarios
 - **Dashboard Personal**: Estadísticas y progreso individual
 - **Fotos de Perfil**: Sistema completo de avatares con fotos personalizadas y emojis predefinidos
+- **Imágenes de Retos**: Los retos pueden tener imágenes personalizadas o iconos temáticos
 - **Admin Panel**: Gestión completa de retos y usuarios
 
 ## Estructura del Proyecto
@@ -324,6 +325,38 @@ RetosLógicoMatemáticos/
 ### URLs relacionadas:
 - **Editar foto**: `http://127.0.0.1:8000/cuentas/perfil/editar/`
 - **Ver perfil**: `http://127.0.0.1:8000/cuentas/perfil/`
+
+## Sistema de Imágenes para Retos
+
+### Características:
+- **Imagen personalizada**: Los administradores pueden subir imágenes relacionadas con cada reto
+- **Iconos predefinidos**: 12 opciones de emojis temáticos para elegir
+- **Sin imagen**: Si no hay imagen ni icono, se usa 🧩 por defecto
+- **Eliminación**: Los administradores pueden quitar la imagen cuando quieran
+
+### Opciones de iconos:
+- 🧩 Puzzle
+- 🔢 Números
+- 🧮 Cálculo
+- 🎯 Objetivo
+- 💡 Idea
+- 🎲 Dados
+- 📊 Gráficos
+- 🔍 Búsqueda
+- ⚡ Rápido
+- 🏆 Premio
+- 🎨 Arte
+- 🌐 Global
+
+### Funcionalidades:
+- **Validación de archivos**: Solo imágenes (JPG, PNG, GIF) máximo 5MB
+- **Vista previa en admin**: Los administradores pueden ver la imagen en el panel de administración
+- **Integración completa**: La imagen se muestra en lista de retos, detalle del reto y dashboard
+- **Responsive**: Se adapta a diferentes tamaños de pantalla
+
+### URLs relacionadas:
+- **Panel admin**: `http://127.0.0.1:8000/admin/retos/reto/`
+- **Lista de retos**: `http://127.0.0.1:8000/retos/`
 
 ## Fixtures (Datos de Ejemplo)
 

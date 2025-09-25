@@ -43,12 +43,12 @@ class RetoAdminForm(forms.ModelForm):
 
 class RetoAdmin(admin.ModelAdmin):
     form = RetoAdminForm
-    list_display = ['titulo', 'categoria', 'dificultad_badge', 'puntos', 'orden_prioridad', 'mostrar_aleatorio', 'max_intentos', 'activo_badge', 'tasa_exito', 'fecha_creacion']
+    list_display = ['imagen_preview', 'titulo', 'categoria', 'dificultad_badge', 'puntos', 'orden_prioridad', 'mostrar_aleatorio', 'max_intentos', 'activo_badge', 'tasa_exito', 'fecha_creacion']
     list_filter = ['dificultad', 'categoria', 'activo', 'mostrar_aleatorio', 'max_intentos', 'fecha_creacion']
     search_fields = ['titulo', 'descripcion', 'enunciado']
     ordering = ['-fecha_creacion']
     readonly_fields = ['fecha_creacion', 'fecha_modificacion', 'intentos_totales', 'intentos_exitosos', 'tasa_exito_calculada']
-    actions = ['activar_retos', 'desactivar_retos', 'actualizar_estadisticas', 'cambiar_max_intentos']
+    actions = ['activar_retos', 'desactivar_retos', 'actualizar_estadisticas', 'cambiar_max_intentos', 'eliminar_imagenes']
     inlines = [RespuestaAlternativaInline]
     
     fieldsets = (
@@ -60,6 +60,18 @@ class RetoAdmin(admin.ModelAdmin):
                 • <strong>titulo:</strong> Nombre del reto que ven los usuarios (ej: "El problema de los sombreros")<br>
                 • <strong>descripcion:</strong> Descripción general del reto para los usuarios (ej: "Un clásico problema de lógica deductiva")<br>
                 • <strong>categoria, dificultad, puntos:</strong> Clasificación y puntuación del reto
+            </div>
+            '''
+        }),
+        ('Imagen del Reto', {
+            'fields': ('imagen_reto', 'icono_por_defecto'),
+            'description': '''
+            <div style="background: #e7f3ff; padding: 10px; border-left: 4px solid #17a2b8; margin: 10px 0;">
+                <strong>🖼️ IMAGEN DEL RETO (opcional):</strong><br>
+                • <strong>imagen_reto:</strong> Sube una imagen personalizada relacionada con el reto<br>
+                • <strong>icono_por_defecto:</strong> Selecciona un emoji si no tienes imagen personal<br>
+                • Si no hay imagen ni icono, se usa 🧩 por defecto<br>
+                • <strong>Nota:</strong> Si hay imagen personal, el icono se ignora. Para usar solo el icono, elimina la imagen primero.
             </div>
             '''
         }),
@@ -124,6 +136,22 @@ class RetoAdmin(admin.ModelAdmin):
             obj.get_dificultad_display()
         )
     dificultad_badge.short_description = 'Dificultad'
+    
+    def imagen_preview(self, obj):
+        """Muestra una vista previa de la imagen del reto en el admin"""
+        if obj.imagen_reto:
+            return format_html(
+                '<img src="{}" style="width: 30px; height: 30px; object-fit: cover; border-radius: 3px;" />',
+                obj.imagen_reto.url
+            )
+        elif obj.icono_por_defecto:
+            return format_html(
+                '<div style="font-size: 20px; text-align: center;">{}</div>',
+                obj.icono_por_defecto
+            )
+        else:
+            return format_html('<div style="font-size: 20px; text-align: center;">🧩</div>')
+    imagen_preview.short_description = 'Imagen'
     
     def activo_badge(self, obj):
         if obj.activo:
@@ -192,6 +220,26 @@ class RetoAdmin(admin.ModelAdmin):
         }
         return render(request, 'admin/retos/reto/cambiar_intentos.html', context)
     cambiar_max_intentos.short_description = "Cambiar número de intentos"
+    
+    def eliminar_imagenes(self, request, queryset):
+        """Acción personalizada para eliminar imágenes de múltiples retos"""
+        updated = 0
+        for reto in queryset:
+            if reto.imagen_reto:
+                reto.eliminar_imagen_personal()
+                updated += 1
+        
+        if updated > 0:
+            self.message_user(
+                request, 
+                f'Se eliminaron las imágenes de {updated} retos.'
+            )
+        else:
+            self.message_user(
+                request, 
+                'No se encontraron retos con imágenes para eliminar.'
+            )
+    eliminar_imagenes.short_description = "Eliminar imágenes seleccionadas"
 
 
 class RespuestaAlternativaAdmin(admin.ModelAdmin):
