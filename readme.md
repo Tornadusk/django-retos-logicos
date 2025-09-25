@@ -358,6 +358,11 @@ RetosLógicoMatemáticos/
 - **Panel admin**: `http://127.0.0.1:8000/admin/retos/reto/`
 - **Lista de retos**: `http://127.0.0.1:8000/retos/`
 
+### Mejoras implementadas:
+- **Escalado de imágenes**: Las imágenes tienen efectos hover y se escalan suavemente
+- **Eliminación desde admin**: Acción masiva para eliminar imágenes de múltiples retos
+- **Iconos en datos de ejemplo**: Los 12 retos de ejemplo tienen iconos temáticos apropiados
+
 ## Fixtures (Datos de Ejemplo)
 
 ### ¿Qué son las fixtures?
