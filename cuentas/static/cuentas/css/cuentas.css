@@ -1,5 +1,6 @@
 /* Estilos específicos para la app cuentas */
 
+
 .auth-card {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border: none;
@@ -65,4 +66,36 @@
 .password-strength.strong {
     background-color: #28a745;
     width: 100%;
+}
+
+/* ===== TOGGLE DE CONTRASEÑAS ===== */
+.password-toggle {
+    position: absolute !important;
+    right: 5px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    border: none !important;
+    background: none !important;
+    z-index: 10 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 5px !important;
+    color: #6c757d !important;
+    min-width: 24px !important;
+    min-height: 24px !important;
+}
+
+.password-toggle:hover {
+    background: rgba(0,0,0,0.1) !important;
+    border-radius: 3px !important;
+    color: #495057 !important;
+}
+
+.password-field-wrapper {
+    position: relative !important;
+    display: inline-block !important;
+    width: 100% !important;
 }

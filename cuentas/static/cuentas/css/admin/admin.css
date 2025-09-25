@@ -1,0 +1,47 @@
+/* Estilos específicos para el admin de Django */
+
+/* ===== PAGINACIÓN ===== */
+.paginator {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.paginator a, .paginator .this-page {
+    display: inline-block;
+    padding: 4px 8px;
+    margin: 0 2px;
+    text-decoration: none;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+.paginator a {
+    color: #007bff;
+    background: white;
+}
+
+.paginator a:hover {
+    background: #f8f9fa;
+}
+
+.paginator .this-page {
+    background: #6c757d;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 3px;
+}
+
+/* ===== TOGGLE DE CONTRASEÑAS EN ADMIN ===== */
+.password-toggle {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid #ddd !important;
+    border-radius: 3px !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
+}
+
+.password-toggle:hover {
+    background: rgba(255, 255, 255, 1) !important;
+    border-color: #007bff !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3) !important;
+}
+
