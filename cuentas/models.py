@@ -34,6 +34,28 @@ class PerfilUsuario(models.Model):
     puntuacion_total = models.IntegerField(default=0)
     nivel = models.IntegerField(default=1)
     retos_completados = models.IntegerField(default=0)
+    foto_perfil = models.ImageField(
+        upload_to='perfiles/', 
+        blank=True, 
+        null=True,
+        help_text="Sube una foto personalizada o deja vacío para usar avatar por defecto"
+    )
+    avatar_por_defecto = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=[
+            ('👨', '👨 Hombre'),
+            ('👩', '👩 Mujer'),
+            ('👨‍💼', '👨‍💼 Profesional'),
+            ('👩‍💼', '👩‍💼 Profesional'),
+            ('👨‍🎓', '👨‍🎓 Estudiante'),
+            ('👩‍🎓', '👩‍🎓 Estudiante'),
+            ('👨‍💻', '👨‍💻 Desarrollador'),
+            ('👩‍💻', '👩‍💻 Desarrolladora'),
+        ],
+        help_text="Selecciona un avatar por defecto si no tienes foto personal"
+    )
     
     class Meta:
         verbose_name = "Perfil de Usuario"
@@ -56,6 +78,23 @@ class PerfilUsuario(models.Model):
             es_correcto=True
         ).values('reto').distinct().count()
         self.save()
+    
+    def obtener_avatar(self):
+        """Retorna la foto de perfil si existe, o el avatar por defecto"""
+        if self.foto_perfil:
+            return self.foto_perfil.url
+        return self.avatar_por_defecto or '👤'
+    
+    def tiene_foto_personal(self):
+        """Verifica si el usuario tiene una foto personal subida"""
+        return bool(self.foto_perfil)
+    
+    def eliminar_foto_personal(self):
+        """Elimina la foto personal del usuario"""
+        if self.foto_perfil:
+            self.foto_perfil.delete(save=False)
+            self.foto_perfil = None
+            self.save()
 
 @receiver(post_save, sender=User)
 def crear_perfil_usuario(sender, instance, created, **kwargs):

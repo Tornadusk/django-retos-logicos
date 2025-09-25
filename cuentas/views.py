@@ -6,7 +6,7 @@ from django.contrib.auth.views import LoginView
 from django.contrib import messages
 from django.contrib.auth.models import User
 from .models import PerfilUsuario
-from .forms import RegistroForm, LoginForm
+from .forms import RegistroForm, LoginForm, PerfilForm
 from juego.models import Ranking
 
 def registro(request):
@@ -110,3 +110,50 @@ def cambiar_password(request):
         return redirect('cuentas:perfil')
     
     return render(request, 'cuentas/cambiar_password.html')
+
+@login_required
+def editar_perfil(request):
+    """Vista para editar la foto de perfil del usuario"""
+    perfil = request.user.perfil
+    
+    if request.method == 'POST':
+        form = PerfilForm(request.POST, request.FILES, instance=perfil)
+        
+        # Si se quiere eliminar la foto
+        if 'eliminar_foto' in request.POST:
+            perfil.eliminar_foto_personal()
+            messages.success(request, 'Foto eliminada correctamente.')
+            return redirect('cuentas:editar_perfil')
+        
+        if form.is_valid():
+            # Procesar opciones de foto
+            opcion_foto = request.POST.get('opcion_foto')
+            
+            if opcion_foto == 'personal':
+                # Si se subió una foto, usar la foto personal
+                if 'foto_perfil' in request.FILES:
+                    perfil.foto_perfil = request.FILES['foto_perfil']
+                    perfil.avatar_por_defecto = None  # Limpiar avatar por defecto
+                # Si no hay foto nueva pero ya tenía una, mantenerla
+            elif opcion_foto == 'avatar':
+                # Usar avatar por defecto
+                perfil.foto_perfil = None  # Limpiar foto personal
+                if 'avatar_por_defecto' in request.POST:
+                    perfil.avatar_por_defecto = request.POST['avatar_por_defecto'] or None
+            elif opcion_foto == 'sin_foto':
+                # Sin foto ni avatar
+                perfil.foto_perfil = None
+                perfil.avatar_por_defecto = None
+            
+            perfil.save()
+            messages.success(request, 'Perfil actualizado correctamente.')
+            return redirect('cuentas:perfil')
+    else:
+        form = PerfilForm(instance=perfil)
+    
+    context = {
+        'form': form,
+        'perfil': perfil,
+    }
+    
+    return render(request, 'cuentas/editar_perfil.html', context)

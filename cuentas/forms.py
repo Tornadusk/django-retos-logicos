@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
+from .models import PerfilUsuario
 
 class RegistroForm(UserCreationForm):
     """Formulario personalizado de registro que incluye email"""
@@ -98,3 +99,44 @@ class LoginForm(AuthenticationForm):
         else:
             # Es un username normal
             return username
+
+class PerfilForm(forms.ModelForm):
+    """Formulario para editar el perfil de usuario con opciones de foto"""
+    
+    class Meta:
+        model = PerfilUsuario
+        fields = ['foto_perfil', 'avatar_por_defecto']
+        widgets = {
+            'foto_perfil': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/*'
+            }),
+            'avatar_por_defecto': forms.Select(attrs={
+                'class': 'form-select'
+            })
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Hacer el campo de foto opcional
+        self.fields['foto_perfil'].required = False
+        self.fields['avatar_por_defecto'].required = False
+        
+        # Añadir opción vacía para avatar por defecto
+        self.fields['avatar_por_defecto'].choices = [
+            ('', 'Sin avatar (usar 👤 por defecto)')
+        ] + list(self.fields['avatar_por_defecto'].choices[1:])
+    
+    def clean_foto_perfil(self):
+        """Validar la foto de perfil"""
+        foto = self.cleaned_data.get('foto_perfil')
+        if foto:
+            # Validar tamaño (máximo 5MB)
+            if foto.size > 5 * 1024 * 1024:
+                raise forms.ValidationError('La foto no puede ser mayor a 5MB.')
+            
+            # Validar formato
+            if not foto.content_type.startswith('image/'):
+                raise forms.ValidationError('Solo se permiten archivos de imagen.')
+        
+        return foto

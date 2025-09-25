@@ -131,3 +131,7 @@ LOGOUT_REDIRECT_URL = '/'
 
 # Custom user model
 AUTH_USER_MODEL = 'cuentas.User'
+
+# Media files (user uploads)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

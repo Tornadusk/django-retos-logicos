@@ -9,6 +9,7 @@ Sistema web para resolver retos lógicos y matemáticos con sistema de puntuaci�
 - **Sistema de Puntuación**: Puntos basados en dificultad y tiempo de respuesta
 - **Ranking de Usuarios**: Clasificación competitiva entre usuarios
 - **Dashboard Personal**: Estadísticas y progreso individual
+- **Fotos de Perfil**: Sistema completo de avatares con fotos personalizadas y emojis predefinidos
 - **Admin Panel**: Gestión completa de retos y usuarios
 
 ## Estructura del Proyecto
@@ -98,13 +99,22 @@ RetosLógicoMatemáticos/
    pip install -r requirements.txt
    ```
 
+   **Importante:** Este proyecto requiere Pillow para manejar imágenes de perfil. Si instalas manualmente:
+   ```bash
+   # Windows
+   pip install Pillow
+
+   # Linux/Mac
+   pip3 install Pillow
+   ```
+
    Alternativa rápida (mínima) si solo quieres poner a andar el servidor:
    ```bash
    # Windows
-   pip install django
+   pip install django Pillow
 
    # Linux/Mac
-   pip3 install django
+   pip3 install django Pillow
    ```
 
 
@@ -286,6 +296,34 @@ RetosLógicoMatemáticos/
 - **Por prioridad**: Según configuración del admin
 - **Por popularidad**: Más intentos primero
 - **Aleatorio**: Orden completamente aleatorio
+
+## Sistema de Fotos de Perfil
+
+### Características:
+- **Foto personalizada**: Los usuarios pueden subir su propia foto de perfil
+- **Avatares predefinidos**: 8 opciones de emojis para elegir
+- **Sin foto**: Opción de no tener foto (usa 👤 por defecto)
+- **Eliminación**: Los usuarios pueden quitar su foto cuando quieran
+
+### Opciones de avatar:
+- 👨 Hombre
+- 👩 Mujer  
+- 👨‍💼 Profesional
+- 👩‍💼 Profesional
+- 👨‍🎓 Estudiante
+- 👩‍🎓 Estudiante
+- 👨‍💻 Desarrollador
+- 👩‍💻 Desarrolladora
+
+### Funcionalidades:
+- **Validación de archivos**: Solo imágenes (JPG, PNG, GIF) máximo 5MB
+- **Vista previa**: Los usuarios pueden ver cómo se verá su avatar antes de guardar
+- **Integración completa**: La foto se muestra en navbar, perfil y toda la aplicación
+- **Responsive**: Se adapta a diferentes tamaños de pantalla
+
+### URLs relacionadas:
+- **Editar foto**: `http://127.0.0.1:8000/cuentas/perfil/editar/`
+- **Ver perfil**: `http://127.0.0.1:8000/cuentas/perfil/`
 
 ## Fixtures (Datos de Ejemplo)
 

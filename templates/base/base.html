@@ -74,8 +74,21 @@
                             </a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user"></i> {{ user.username }}
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                <div class="me-2">
+                                    {% if user.perfil.foto_perfil %}
+                                        <img src="{{ user.perfil.foto_perfil.url }}" alt="Foto de perfil" 
+                                             class="rounded-circle" style="width: 25px; height: 25px; object-fit: cover;">
+                                    {% elif user.perfil.avatar_por_defecto %}
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center bg-white text-dark" 
+                                             style="width: 25px; height: 25px; font-size: 0.8rem;">
+                                            {{ user.perfil.avatar_por_defecto }}
+                                        </div>
+                                    {% else %}
+                                        <i class="fas fa-user"></i>
+                                    {% endif %}
+                                </div>
+                                {{ user.username }}
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{% url 'cuentas:perfil' %}">Perfil</a></li>

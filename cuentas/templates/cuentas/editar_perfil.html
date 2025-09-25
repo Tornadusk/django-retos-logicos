@@ -1,0 +1,196 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Editar Perfil{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">📷 Editar Foto de Perfil</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Mostrar foto actual -->
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <h6>Foto Actual:</h6>
+                                    {% if perfil.foto_perfil %}
+                                        <img src="{{ perfil.foto_perfil.url }}" alt="Foto actual" 
+                                             class="img-thumbnail profile-avatar" style="width: 150px; height: 150px; object-fit: cover;">
+                                        <p class="text-success mt-2"><i class="fas fa-check"></i> Foto personalizada</p>
+                                    {% elif perfil.avatar_por_defecto %}
+                                        <div class="profile-avatar d-flex align-items-center justify-content-center" 
+                                             style="width: 150px; height: 150px; font-size: 4rem; background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 50%; margin: 0 auto;">
+                                            {{ perfil.avatar_por_defecto }}
+                                        </div>
+                                        <p class="text-info mt-2"><i class="fas fa-user"></i> Avatar por defecto</p>
+                                    {% else %}
+                                        <div class="profile-avatar d-flex align-items-center justify-content-center" 
+                                             style="width: 150px; height: 150px; font-size: 4rem; background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 50%; margin: 0 auto;">
+                                            👤
+                                        </div>
+                                        <p class="text-muted mt-2"><i class="fas fa-user"></i> Sin foto</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <h6>Opciones:</h6>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="opcion_foto" id="opcion_personal" value="personal" 
+                                           {% if perfil.foto_perfil %}checked{% endif %}>
+                                    <label class="form-check-label" for="opcion_personal">
+                                        <strong>📷 Usar foto personalizada</strong>
+                                    </label>
+                                    <div class="mt-2">
+                                        {{ form.foto_perfil }}
+                                        <small class="form-text text-muted">Formatos: JPG, PNG, GIF. Máximo 5MB</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="opcion_foto" id="opcion_avatar" value="avatar" 
+                                           {% if perfil.avatar_por_defecto and not perfil.foto_perfil %}checked{% endif %}>
+                                    <label class="form-check-label" for="opcion_avatar">
+                                        <strong>🎭 Usar avatar por defecto</strong>
+                                    </label>
+                                    <div class="mt-2">
+                                        {{ form.avatar_por_defecto }}
+                                    </div>
+                                </div>
+                                
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="opcion_foto" id="opcion_sin_foto" value="sin_foto" 
+                                           {% if not perfil.foto_perfil and not perfil.avatar_por_defecto %}checked{% endif %}>
+                                    <label class="form-check-label" for="opcion_sin_foto">
+                                        <strong>🚫 Sin foto (usar 👤 por defecto)</strong>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Guardar Cambios
+                            </button>
+                            {% if perfil.foto_perfil %}
+                                <button type="submit" name="eliminar_foto" class="btn btn-danger">
+                                    <i class="fas fa-trash"></i> Eliminar Foto
+                                </button>
+                            {% endif %}
+                            <a href="{% url 'cuentas:perfil' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Volver al Perfil
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0">ℹ️ Información</h6>
+                </div>
+                <div class="card-body">
+                    <h6>📷 Foto Personalizada:</h6>
+                    <ul class="small">
+                        <li>Sube tu propia foto</li>
+                        <li>Formatos: JPG, PNG, GIF</li>
+                        <li>Tamaño máximo: 5MB</li>
+                        <li>Se recomienda imagen cuadrada</li>
+                    </ul>
+                    
+                    <h6>🎭 Avatar por Defecto:</h6>
+                    <ul class="small">
+                        <li>Elige entre emojis predefinidos</li>
+                        <li>No requiere subir archivos</li>
+                        <li>Se ve igual en todos los dispositivos</li>
+                    </ul>
+                    
+                    <h6>🚫 Sin Foto:</h6>
+                    <ul class="small">
+                        <li>Usa el emoji 👤 por defecto</li>
+                        <li>Opción más simple</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0">👀 Vista Previa</h6>
+                </div>
+                <div class="card-body text-center">
+                    <div id="vista_previa" class="mb-3">
+                        {% if perfil.foto_perfil %}
+                            <img src="{{ perfil.foto_perfil.url }}" alt="Vista previa" 
+                                 class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
+                        {% elif perfil.avatar_por_defecto %}
+                            <div style="font-size: 3rem;">{{ perfil.avatar_por_defecto }}</div>
+                        {% else %}
+                            <div style="font-size: 3rem;">👤</div>
+                        {% endif %}
+                    </div>
+                    <small class="text-muted">Así se verá tu avatar en la aplicación</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const opciones = document.querySelectorAll('input[name="opcion_foto"]');
+    const inputFoto = document.getElementById('id_foto_perfil');
+    const selectAvatar = document.getElementById('id_avatar_por_defecto');
+    const vistaPrevia = document.getElementById('vista_previa');
+    
+    function actualizarVistaPrevia() {
+        const opcionSeleccionada = document.querySelector('input[name="opcion_foto"]:checked');
+        
+        if (opcionSeleccionada.value === 'personal' && inputFoto.files.length > 0) {
+            const file = inputFoto.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                vistaPrevia.innerHTML = `<img src="${e.target.result}" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">`;
+            };
+            reader.readAsDataURL(file);
+        } else if (opcionSeleccionada.value === 'avatar') {
+            const avatarSeleccionado = selectAvatar.value;
+            if (avatarSeleccionado) {
+                vistaPrevia.innerHTML = `<div style="font-size: 3rem;">${avatarSeleccionado}</div>`;
+            } else {
+                vistaPrevia.innerHTML = `<div style="font-size: 3rem;">👤</div>`;
+            }
+        } else {
+            vistaPrevia.innerHTML = `<div style="font-size: 3rem;">👤</div>`;
+        }
+    }
+    
+    opciones.forEach(opcion => {
+        opcion.addEventListener('change', actualizarVistaPrevia);
+    });
+    
+    inputFoto.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            document.getElementById('opcion_personal').checked = true;
+            actualizarVistaPrevia();
+        }
+    });
+    
+    selectAvatar.addEventListener('change', function() {
+        if (this.value) {
+            document.getElementById('opcion_avatar').checked = true;
+            actualizarVistaPrevia();
+        }
+    });
+});
+</script>
+{% endblock %}
