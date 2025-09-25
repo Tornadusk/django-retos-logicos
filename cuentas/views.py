@@ -3,6 +3,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.auth.models import User
 from .models import PerfilUsuario
@@ -11,7 +12,13 @@ from juego.models import Ranking
 
 def registro(request):
     """Vista para el registro de nuevos usuarios"""
+    # Si el usuario ya está logueado, redirigir al dashboard
+    if request.user.is_authenticated:
+        messages.info(request, 'Ya tienes una sesión activa. Para crear otra cuenta, primero cierra sesión.')
+        return redirect('retos:dashboard')
+    
     if request.method == 'POST':
+        print(f"DEBUG: POST request recibido, CSRF token: {request.POST.get('csrfmiddlewaretoken', 'NO ENCONTRADO')}")
         form = RegistroForm(request.POST)
         if form.is_valid():
             user = form.save()
@@ -35,6 +42,13 @@ class CustomLoginView(LoginView):
     """Vista personalizada de login que permite email o username"""
     form_class = LoginForm
     template_name = 'cuentas/login.html'
+    
+    def dispatch(self, request, *args, **kwargs):
+        """Redirigir usuarios ya autenticados"""
+        if request.user.is_authenticated:
+            messages.info(request, 'Ya tienes una sesión activa. Para cambiar de cuenta, primero cierra sesión.')
+            return redirect('retos:dashboard')
+        return super().dispatch(request, *args, **kwargs)
     
     def form_valid(self, form):
         """Mensaje de bienvenida personalizado"""
