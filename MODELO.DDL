@@ -20,45 +20,47 @@ CREATE TABLE IF NOT EXISTS "auth_permission" (
 	PRIMARY KEY("id" AUTOINCREMENT),
 	FOREIGN KEY("content_type_id") REFERENCES "django_content_type"("id") DEFERRABLE INITIALLY DEFERRED
 );
-CREATE TABLE IF NOT EXISTS "auth_user" (
-	"id"	integer NOT NULL,
-	"password"	varchar(128) NOT NULL,
-	"last_login"	datetime,
-	"is_superuser"	bool NOT NULL,
-	"username"	varchar(150) NOT NULL UNIQUE,
-	"last_name"	varchar(150) NOT NULL,
-	"email"	varchar(254) NOT NULL,
-	"is_staff"	bool NOT NULL,
-	"is_active"	bool NOT NULL,
-	"date_joined"	datetime NOT NULL,
-	"first_name"	varchar(150) NOT NULL,
-	PRIMARY KEY("id" AUTOINCREMENT)
-);
-CREATE TABLE IF NOT EXISTS "auth_user_groups" (
-	"id"	integer NOT NULL,
-	"user_id"	integer NOT NULL,
-	"group_id"	integer NOT NULL,
-	PRIMARY KEY("id" AUTOINCREMENT),
-	FOREIGN KEY("group_id") REFERENCES "auth_group"("id") DEFERRABLE INITIALLY DEFERRED,
-	FOREIGN KEY("user_id") REFERENCES "auth_user"("id") DEFERRABLE INITIALLY DEFERRED
-);
-CREATE TABLE IF NOT EXISTS "auth_user_user_permissions" (
-	"id"	integer NOT NULL,
-	"user_id"	integer NOT NULL,
-	"permission_id"	integer NOT NULL,
-	PRIMARY KEY("id" AUTOINCREMENT),
-	FOREIGN KEY("permission_id") REFERENCES "auth_permission"("id") DEFERRABLE INITIALLY DEFERRED,
-	FOREIGN KEY("user_id") REFERENCES "auth_user"("id") DEFERRABLE INITIALLY DEFERRED
-);
 CREATE TABLE IF NOT EXISTS "cuentas_perfilusuario" (
 	"id"	integer NOT NULL,
 	"fecha_registro"	datetime NOT NULL,
 	"puntuacion_total"	integer NOT NULL,
 	"nivel"	integer NOT NULL,
 	"retos_completados"	integer NOT NULL,
-	"usuario_id"	integer NOT NULL UNIQUE,
+	"usuario_id"	bigint NOT NULL UNIQUE,
+	"avatar_por_defecto"	varchar(50),
+	"foto_perfil"	varchar(100),
 	PRIMARY KEY("id" AUTOINCREMENT),
-	FOREIGN KEY("usuario_id") REFERENCES "auth_user"("id") DEFERRABLE INITIALLY DEFERRED
+	FOREIGN KEY("usuario_id") REFERENCES "cuentas_user"("id") DEFERRABLE INITIALLY DEFERRED
+);
+CREATE TABLE IF NOT EXISTS "cuentas_user" (
+	"id"	integer NOT NULL,
+	"password"	varchar(128) NOT NULL,
+	"last_login"	datetime,
+	"is_superuser"	bool NOT NULL,
+	"username"	varchar(150) NOT NULL UNIQUE,
+	"first_name"	varchar(150) NOT NULL,
+	"last_name"	varchar(150) NOT NULL,
+	"email"	varchar(254) NOT NULL,
+	"is_staff"	bool NOT NULL,
+	"is_active"	bool NOT NULL,
+	"date_joined"	datetime NOT NULL,
+	PRIMARY KEY("id" AUTOINCREMENT)
+);
+CREATE TABLE IF NOT EXISTS "cuentas_user_groups" (
+	"id"	integer NOT NULL,
+	"user_id"	bigint NOT NULL,
+	"group_id"	integer NOT NULL,
+	PRIMARY KEY("id" AUTOINCREMENT),
+	FOREIGN KEY("group_id") REFERENCES "auth_group"("id") DEFERRABLE INITIALLY DEFERRED,
+	FOREIGN KEY("user_id") REFERENCES "cuentas_user"("id") DEFERRABLE INITIALLY DEFERRED
+);
+CREATE TABLE IF NOT EXISTS "cuentas_user_user_permissions" (
+	"id"	integer NOT NULL,
+	"user_id"	bigint NOT NULL,
+	"permission_id"	integer NOT NULL,
+	PRIMARY KEY("id" AUTOINCREMENT),
+	FOREIGN KEY("permission_id") REFERENCES "auth_permission"("id") DEFERRABLE INITIALLY DEFERRED,
+	FOREIGN KEY("user_id") REFERENCES "cuentas_user"("id") DEFERRABLE INITIALLY DEFERRED
 );
 CREATE TABLE IF NOT EXISTS "django_admin_log" (
 	"id"	integer NOT NULL,
@@ -67,11 +69,11 @@ CREATE TABLE IF NOT EXISTS "django_admin_log" (
 	"action_flag"	smallint unsigned NOT NULL CHECK("action_flag" >= 0),
 	"change_message"	text NOT NULL,
 	"content_type_id"	integer,
-	"user_id"	integer NOT NULL,
+	"user_id"	bigint NOT NULL,
 	"action_time"	datetime NOT NULL,
 	PRIMARY KEY("id" AUTOINCREMENT),
 	FOREIGN KEY("content_type_id") REFERENCES "django_content_type"("id") DEFERRABLE INITIALLY DEFERRED,
-	FOREIGN KEY("user_id") REFERENCES "auth_user"("id") DEFERRABLE INITIALLY DEFERRED
+	FOREIGN KEY("user_id") REFERENCES "cuentas_user"("id") DEFERRABLE INITIALLY DEFERRED
 );
 CREATE TABLE IF NOT EXISTS "django_content_type" (
 	"id"	integer NOT NULL,
@@ -100,10 +102,10 @@ CREATE TABLE IF NOT EXISTS "juego_intento" (
 	"fecha_intento"	datetime NOT NULL,
 	"tiempo_respuesta"	bigint,
 	"reto_id"	bigint NOT NULL,
-	"usuario_id"	integer NOT NULL,
+	"usuario_id"	bigint NOT NULL,
 	PRIMARY KEY("id" AUTOINCREMENT),
 	FOREIGN KEY("reto_id") REFERENCES "retos_reto"("id") DEFERRABLE INITIALLY DEFERRED,
-	FOREIGN KEY("usuario_id") REFERENCES "auth_user"("id") DEFERRABLE INITIALLY DEFERRED
+	FOREIGN KEY("usuario_id") REFERENCES "cuentas_user"("id") DEFERRABLE INITIALLY DEFERRED
 );
 CREATE TABLE IF NOT EXISTS "juego_ranking" (
 	"id"	integer NOT NULL,
@@ -111,9 +113,9 @@ CREATE TABLE IF NOT EXISTS "juego_ranking" (
 	"puntuacion_total"	integer NOT NULL,
 	"retos_completados"	integer NOT NULL,
 	"fecha_actualizacion"	datetime NOT NULL,
-	"usuario_id"	integer NOT NULL UNIQUE,
+	"usuario_id"	bigint NOT NULL UNIQUE,
 	PRIMARY KEY("id" AUTOINCREMENT),
-	FOREIGN KEY("usuario_id") REFERENCES "auth_user"("id") DEFERRABLE INITIALLY DEFERRED
+	FOREIGN KEY("usuario_id") REFERENCES "cuentas_user"("id") DEFERRABLE INITIALLY DEFERRED
 );
 CREATE TABLE IF NOT EXISTS "retos_categoria" (
 	"id"	integer NOT NULL,
@@ -156,14 +158,16 @@ CREATE TABLE IF NOT EXISTS "retos_reto" (
 	"intentos_totales"	integer NOT NULL,
 	"intentos_exitosos"	integer NOT NULL,
 	"categoria_id"	bigint,
-	"creado_por_id"	integer,
+	"creado_por_id"	bigint,
 	"mostrar_aleatorio"	bool NOT NULL,
 	"orden_prioridad"	integer NOT NULL,
 	"max_intentos"	integer NOT NULL,
 	"ejemplo_entrada"	text NOT NULL,
+	"icono_por_defecto"	varchar(50),
+	"imagen_reto"	varchar(100),
 	PRIMARY KEY("id" AUTOINCREMENT),
 	FOREIGN KEY("categoria_id") REFERENCES "retos_categoria"("id") DEFERRABLE INITIALLY DEFERRED,
-	FOREIGN KEY("creado_por_id") REFERENCES "auth_user"("id") DEFERRABLE INITIALLY DEFERRED
+	FOREIGN KEY("creado_por_id") REFERENCES "cuentas_user"("id") DEFERRABLE INITIALLY DEFERRED
 );
 CREATE INDEX IF NOT EXISTS "auth_group_permissions_group_id_b120cbf9" ON "auth_group_permissions" (
 	"group_id"
@@ -182,23 +186,23 @@ CREATE UNIQUE INDEX IF NOT EXISTS "auth_permission_content_type_id_codename_01ab
 	"content_type_id",
 	"codename"
 );
-CREATE INDEX IF NOT EXISTS "auth_user_groups_group_id_97559544" ON "auth_user_groups" (
+CREATE INDEX IF NOT EXISTS "cuentas_user_groups_group_id_01da5097" ON "cuentas_user_groups" (
 	"group_id"
 );
-CREATE INDEX IF NOT EXISTS "auth_user_groups_user_id_6a12ed8b" ON "auth_user_groups" (
+CREATE INDEX IF NOT EXISTS "cuentas_user_groups_user_id_32bf72fc" ON "cuentas_user_groups" (
 	"user_id"
 );
-CREATE UNIQUE INDEX IF NOT EXISTS "auth_user_groups_user_id_group_id_94350c0c_uniq" ON "auth_user_groups" (
+CREATE UNIQUE INDEX IF NOT EXISTS "cuentas_user_groups_user_id_group_id_b0e4ee0c_uniq" ON "cuentas_user_groups" (
 	"user_id",
 	"group_id"
 );
-CREATE INDEX IF NOT EXISTS "auth_user_user_permissions_permission_id_1fbb5f2c" ON "auth_user_user_permissions" (
+CREATE INDEX IF NOT EXISTS "cuentas_user_user_permissions_permission_id_29dd3ebc" ON "cuentas_user_user_permissions" (
 	"permission_id"
 );
-CREATE INDEX IF NOT EXISTS "auth_user_user_permissions_user_id_a95ead1b" ON "auth_user_user_permissions" (
+CREATE INDEX IF NOT EXISTS "cuentas_user_user_permissions_user_id_b811d524" ON "cuentas_user_user_permissions" (
 	"user_id"
 );
-CREATE UNIQUE INDEX IF NOT EXISTS "auth_user_user_permissions_user_id_permission_id_14a6b632_uniq" ON "auth_user_user_permissions" (
+CREATE UNIQUE INDEX IF NOT EXISTS "cuentas_user_user_permissions_user_id_permission_id_90596f58_uniq" ON "cuentas_user_user_permissions" (
 	"user_id",
 	"permission_id"
 );
