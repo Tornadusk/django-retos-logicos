@@ -10,8 +10,14 @@
 3. Secciones Detalladas
 4. Funcionalidades por Sección
 5. Guía de Uso Práctica
-6. Mejores Prácticas
-7. Solución de Problemas
+6. Nuevas Características (Imágenes y Navegación)
+7. Mejores Prácticas
+8. Solución de Problemas
+9. Datos de Ejemplo Cargados
+10. Dependencias del Proyecto
+11. Comandos Útiles
+12. URLs Principales del Sistema
+13. Contacto y Soporte
 
 ================================================================================
 1. ACCESO AL PANEL DE ADMINISTRACIÓN
@@ -28,69 +34,71 @@
 2. ESTRUCTURA DEL PANEL
 ================================================================================
 
-El panel está dividido en 4 secciones principales:
+El panel está dividido en 3 secciones principales:
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ 1. AUTHENTICATION AND AUTHORIZATION                                        │
-│ 2. CUENTAS (App de usuarios)                                               │
-│ 3. JUEGO (App de lógica de juego)                                          │
-│ 4. RETOS (App principal)                                                   │
+│ 1. CUENTAS (Usuarios y Perfiles)                                           │
+│ 2. JUEGO (Intentos y Rankings)                                             │
+│ 3. RETOS (Retos y Categorías)                                              │
 └─────────────────────────────────────────────────────────────────────────────┘
+
+📌 NOTA: El sistema ahora usa un modelo de usuario personalizado (CustomUser) 
+         que integra la gestión de usuarios directamente en la sección CUENTAS.
 
 ================================================================================
 3. SECCIONES DETALLADAS
 ================================================================================
 
-🔐 AUTHENTICATION AND AUTHORIZATION
-------------------------------------
-Esta sección maneja la autenticación básica de Django.
-
-📁 Groups (Grupos):
-   • Propósito: Crear grupos de usuarios con permisos específicos
-   • Ejemplos de grupos:
-     - "Profesores": Pueden crear y editar retos
-     - "Estudiantes": Solo pueden resolver retos
-     - "Moderadores": Pueden gestionar usuarios
-   • Acciones disponibles:
-     - "+ Add": Crear nuevo grupo
-     - "Change": Editar grupos existentes
+👤 CUENTAS (Usuarios y Perfiles)
+----------------------------------
+Esta sección maneja tanto los usuarios como sus perfiles extendidos.
 
 👥 Users (Usuarios):
    • Propósito: Gestionar todos los usuarios del sistema
+   • URL: /admin/cuentas/user/
    • Información que contiene:
      - Nombre de usuario, email, nombre, apellido
      - Estado activo/inactivo
      - Permisos de staff y superusuario
      - Fecha de registro y último login
+     - Foto de perfil o avatar (visualizada en la tabla)
    • Acciones disponibles:
-     - "+ Add": Crear nuevo usuario
+     - "+ Add": Crear nuevo usuario (/admin/cuentas/user/add/)
      - "Change": Editar usuarios existentes
-
-================================================================================
-👤 CUENTAS (App de usuarios)
------------------------------
-Esta sección maneja los perfiles extendidos de los usuarios.
+     - "View": Ver información completa del usuario
+   • 🆕 NUEVA CARACTERÍSTICA: 
+     - Imagen clickeable como primera columna para edición rápida
+     - Soporte para fotos de perfil personalizadas
+     - Sistema de avatares emoji predeterminados
+     - Borde azul para identificar usuarios con foto/avatar
 
 📊 Perfiles de Usuario:
    • Propósito: Perfiles extendidos con estadísticas de juego
+   • URL: /admin/cuentas/perfilusuario/
    • Información que contiene:
      - Usuario asociado
      - Puntuación total acumulada
      - Número de retos completados
      - Nivel del usuario
      - Fecha de registro
+     - Foto de perfil o avatar (visualizada en la tabla)
    • Se crea automáticamente cuando se registra un nuevo usuario
    • Acciones disponibles:
      - "+ Add": Crear perfil manualmente (raro)
      - "Change": Editar perfiles existentes
+   • 🆕 NUEVA CARACTERÍSTICA:
+     - Imagen clickeable como primera columna para edición rápida
+     - Borde verde para identificar perfiles con foto/avatar
+     - Sistema integrado de gestión de imágenes
 
 ================================================================================
-🎮 JUEGO (App de lógica de juego)
-----------------------------------
+🎮 JUEGO (Intentos y Rankings)
+-------------------------------
 Esta sección maneja la lógica del juego y las puntuaciones.
 
 🎯 Intentos:
    • Propósito: Registra todas las respuestas de usuarios a retos
+   • URL: /admin/juego/intento/
    • Información que contiene:
      - Usuario que hizo el intento
      - Reto que intentó resolver
@@ -102,9 +110,15 @@ Esta sección maneja la lógica del juego y las puntuaciones.
    • Acciones disponibles:
      - "+ Add": Crear intento manualmente (raro)
      - "Change": Editar intentos existentes
+   • 🔍 FILTROS DISPONIBLES:
+     - Por usuario (columna "Usuario" clickeable)
+     - Por reto
+     - Por fecha
+     - Por resultado (correcto/incorrecto)
 
 🏆 Rankings:
    • Propósito: Clasificación de usuarios por puntuación
+   • URL: /admin/juego/ranking/
    • Información que contiene:
      - Posición en el ranking
      - Usuario
@@ -115,14 +129,19 @@ Esta sección maneja la lógica del juego y las puntuaciones.
    • Se actualiza automáticamente cuando los usuarios completan retos
    • Acción disponible:
      - "View": Solo visualizar (no se puede modificar)
+   • 🔍 FILTROS DISPONIBLES:
+     - Por posición (columna "Posición" clickeable para ordenar)
+     - Por puntuación
+     - Por usuario
 
 ================================================================================
-🧩 RETOS (App principal)
--------------------------
+🧩 RETOS (Retos y Categorías)
+-------------------------------
 Esta es la sección más importante, maneja los retos y categorías.
 
 📂 Categorías:
    • Propósito: Organizar los retos por temas o áreas
+   • URL: /admin/retos/categoria/
    • Información que contiene:
      - Nombre de la categoría
      - Descripción
@@ -135,9 +154,11 @@ Esta es la sección más importante, maneja los retos y categorías.
    • Acciones disponibles:
      - "+ Add": Crear nueva categoría
      - "Change": Editar categorías existentes
+   • 🔍 NAVEGACIÓN: Columna "Nombre" clickeable para edición rápida
 
 🎯 Retos:
    • Propósito: Los acertijos y problemas que resuelven los usuarios
+   • URL: /admin/retos/reto/
    • Información que contiene:
      - Título del reto
      - Descripción breve
@@ -150,9 +171,22 @@ Esta es la sección más importante, maneja los retos y categorías.
      - Estado activo/inactivo
      - Estadísticas: intentos totales y éxitos
      - Metadatos: fecha de creación, creado por
+     - Imagen del reto (personalizada o icono predeterminado)
    • Acciones disponibles:
      - "+ Add": Crear nuevo reto
      - "Change": Editar retos existentes
+     - "Eliminar imágenes": Acción masiva para remover imágenes
+   • 🆕 NUEVA CARACTERÍSTICA:
+     - Imagen clickeable como primera columna para edición rápida
+     - Soporte para imágenes personalizadas
+     - Sistema de iconos emoji predeterminados
+     - Escalado automático de imágenes
+     - Acción para eliminar imágenes masivamente
+   • 🔍 FILTROS DISPONIBLES:
+     - Por categoría
+     - Por dificultad
+     - Por estado (activo/inactivo)
+     - Por creador
 
 ================================================================================
 4. FUNCIONALIDADES POR SECCIÓN
@@ -443,7 +477,86 @@ Esta es la sección más importante, maneja los retos y categorías.
 • **Limpiar datos**: Eliminar intentos duplicados o erróneos
 
 ================================================================================
-6. MEJORES PRÁCTICAS
+6. NUEVAS CARACTERÍSTICAS (IMÁGENES Y NAVEGACIÓN)
+================================================================================
+
+🖼️ SISTEMA DE IMÁGENES CLICKEABLES
+===================================
+
+📋 NAVEGACIÓN MEJORADA EN TABLAS DEL ADMIN:
+--------------------------------------------
+
+🎯 **TABLAS CON IMÁGENES CLICKEABLES (Primera columna):**
+• **CUENTAS → Users**: Imagen de perfil/avatar como enlace principal
+• **CUENTAS → Perfiles de Usuario**: Imagen de perfil/avatar como enlace principal  
+• **RETOS → Retos**: Imagen del reto/icono como enlace principal
+
+🎯 **TABLAS CON TEXTO CLICKEABLE (Columnas tradicionales):**
+• **JUEGO → Intentos**: Columna "Usuario" clickeable
+• **JUEGO → Rankings**: Columna "Posición" clickeable
+• **RETOS → Categorías**: Columna "Nombre" clickeable
+
+🖼️ SISTEMA DE FOTOS DE PERFIL
+==============================
+
+👤 **PARA USUARIOS Y PERFILES:**
+• **Fotos personalizadas**: Subir imagen desde dispositivo
+• **Avatares emoji**: Seleccionar de lista predeterminada
+• **Sistema de respaldo**: foto → avatar → icono por defecto
+• **Identificación visual**: 
+  - Borde azul: Usuarios con foto/avatar
+  - Borde verde: Perfiles con foto/avatar
+  - Borde gris: Sin foto/avatar (icono por defecto)
+
+🎨 **AVATARES EMOJI DISPONIBLES:**
+• 😀 😃 😄 😁 😊 😇 🙂 🙃 😉 😌
+• 🤔 🤗 🤩 🤨 😐 😑 😶 🙄 😏 😣
+• 😫 😴 😪 🤤 🤢 🤮 🤧 😷 🤒 🤕
+• 🎭 🎨 🎯 🎪 🎬 🎮 🕹️ 🎲 🧩 🎯
+
+🖼️ SISTEMA DE IMÁGENES PARA RETOS
+==================================
+
+🎯 **PARA RETOS:**
+• **Imágenes personalizadas**: Subir imagen relacionada con el reto
+• **Iconos emoji**: Seleccionar de lista temática
+• **Sistema de respaldo**: imagen → icono → sin imagen
+• **Escalado automático**: Las imágenes se ajustan para mejor visualización
+• **Acción masiva**: "Eliminar imágenes" para remover múltiples imágenes
+
+🎨 **ICONOS EMOJI TEMÁTICOS PARA RETOS:**
+• 🧩 (Puzzles) 🧮 (Matemáticas) 🔢 (Números) 
+• 🎨 (Creatividad) 🎲 (Probabilidad) 💡 (Lógica)
+• 🌐 (Redes) 🎯 (Precisión) 📊 (Estadísticas)
+• 🏆 (Logros) 🔍 (Búsqueda) ⚡ (Rapidez)
+
+🔐 PROTECCIÓN DE RUTAS DE AUTENTICACIÓN
+========================================
+
+🚫 **REDIRECCIÓN AUTOMÁTICA:**
+• **Usuarios autenticados** que intenten acceder a:
+  - /cuentas/login/ → Redirige a dashboard con mensaje informativo
+  - /cuentas/registro/ → Redirige a dashboard con mensaje informativo
+• **Propósito**: Evitar confusión y mejorar experiencia de usuario
+• **Mensaje**: "Ya estás autenticado. Redirigiendo al dashboard..."
+
+👁️ TOGGLE DE CONTRASEÑAS
+=========================
+
+🔑 **VISUALIZACIÓN DE CONTRASEÑAS:**
+• **Disponible en**: Todas las páginas con campos de contraseña
+• **Ubicación**: Icono de ojo en el lado derecho del campo
+• **Estados visuales**:
+  - 👁 (gris): Contraseña oculta
+  - (verde): Contraseña visible
+• **Páginas que incluyen**:
+  - /cuentas/login/
+  - /cuentas/registro/
+  - /cuentas/cambiar-password/
+  - /admin/password_change/
+
+================================================================================
+7. MEJORES PRÁCTICAS
 ================================================================================
 
 ✅ HACER:
@@ -453,6 +566,10 @@ Esta es la sección más importante, maneja los retos y categorías.
 • Mantener explicaciones claras y educativas
 • Revisar estadísticas regularmente
 • Respaldar datos importantes
+• 🆕 Usar imágenes clickeables para navegación rápida
+• 🆕 Aprovechar el sistema de avatares para identificación visual
+• 🆕 Aplicar imágenes temáticas a retos para mejor engagement
+• 🆕 Usar el toggle de contraseñas para verificar credenciales
 
 ❌ NO HACER:
 • Crear retos sin explicación
@@ -461,19 +578,22 @@ Esta es la sección más importante, maneja los retos y categorías.
 • Modificar rankings manualmente
 • Eliminar datos sin respaldo
 • Compartir credenciales de admin
+• 🆕 Subir imágenes muy pesadas (>5MB) para perfiles
+• 🆕 Ignorar el sistema de respaldo (foto → avatar → icono)
+• 🆕 Usar imágenes inapropiadas en retos
 
 ================================================================================
-7. SOLUCIÓN DE PROBLEMAS
+8. SOLUCIÓN DE PROBLEMAS
 ================================================================================
 
 🚨 PROBLEMAS COMUNES
 ---------------------
 
 **Problema**: Usuario no puede acceder
-**Solución**: Verificar en Users que esté activo
+**Solución**: Verificar en CUENTAS → Users que esté activo
 
 **Problema**: Reto no aparece en la lista
-**Solución**: Verificar que esté marcado como "Activo"
+**Solución**: Verificar que esté marcado como "Activo" en RETOS → Retos
 
 **Problema**: Ranking no se actualiza
 **Solución**: Los rankings se actualizan automáticamente, verificar intentos
@@ -484,27 +604,111 @@ Esta es la sección más importante, maneja los retos y categorías.
 **Problema**: No se pueden crear retos
 **Solución**: Verificar permisos de usuario y categorías existentes
 
+🚨 PROBLEMAS NUEVOS (RELACIONADOS CON IMÁGENES)
+-----------------------------------------------
+
+**Problema**: Imagen de perfil no se muestra
+**Solución**: 
+• Verificar que el archivo esté en media/perfiles/
+• Comprobar permisos de lectura del archivo
+• Usar avatar emoji como alternativa
+
+**Problema**: Imagen de reto no se carga
+**Solución**:
+• Verificar que el archivo esté en media/retos/
+• Comprobar formato de imagen (JPG, PNG, GIF)
+• Usar icono emoji como alternativa
+
+**Problema**: Toggle de contraseña no funciona
+**Solución**:
+• Verificar que JavaScript esté habilitado
+• Comprobar que el archivo password_toggle.js se cargue
+• Recargar la página
+
+**Problema**: Usuario autenticado puede acceder a login/registro
+**Solución**: 
+• Esto es normal, el sistema redirige automáticamente
+• El mensaje informativo es parte de la funcionalidad
+
+**Problema**: No se pueden eliminar imágenes masivamente
+**Solución**:
+• Verificar que se seleccionen elementos con checkbox
+• Comprobar permisos de administrador
+• Usar acción "Eliminar imágenes" en lugar de "Eliminar"
+
 ================================================================================
-8. DATOS DE EJEMPLO CARGADOS
+9. DATOS DE EJEMPLO CARGADOS
 ================================================================================
 
 El sistema viene con datos de ejemplo:
 
 📂 CATEGORÍAS (4):
-• Lógica Básica (Verde)
-• Matemáticas (Azul)
-• Secuencias (Amarillo)
-• Geometría (Rojo)
+• Lógica Básica (Verde #28a745)
+• Matemáticas (Azul #007bff)
+• Secuencias (Amarillo #ffc107)
+• Geometría (Rojo #dc3545)
 
-🎯 RETOS (5):
-• Problema de los sombreros (Fácil - 10 pts)
-• Suma de números (Fácil - 15 pts)
-• Secuencia de Fibonacci (Medio - 20 pts)
-• Triángulo imposible (Medio - 25 pts)
-• Monedas falsas (Difícil - 50 pts)
+🎯 RETOS (12 con iconos emoji):
+• Problema de los sombreros (Fácil - 10 pts) - 🧩
+• Suma de números (Fácil - 15 pts) - 🧮
+• Secuencia de Fibonacci (Medio - 20 pts) - 🔢
+• Triángulo imposible (Medio - 25 pts) - 🎨
+• Monedas falsas (Difícil - 50 pts) - 🎲
+• Torre de Hanoi (Difícil - 50 pts) - 💡
+• Redes de computadoras (Experto - 100 pts) - 🌐
+• Cálculo diferencial (Experto - 100 pts) - 🧮
+• Geometría avanzada (Medio - 20 pts) - 🎯
+• Estadísticas básicas (Fácil - 15 pts) - 📊
+• Optimización (Experto - 100 pts) - 🏆
+• Lógica proposicional (Difícil - 50 pts) - 🔍
+
+🆕 NUEVAS CARACTERÍSTICAS EN DATOS DE EJEMPLO:
+• Todos los retos incluyen iconos emoji temáticos
+• Sistema de respaldo automático para imágenes
+• Estructura preparada para fotos de perfil
 
 ================================================================================
-9. COMANDOS ÚTILES
+10. DEPENDENCIAS DEL PROYECTO
+================================================================================
+
+📦 **REQUIREMENTS.TXT:**
+```
+Django==5.2.6
+Pillow==10.0.1
+```
+
+📋 **EXPLICACIÓN DE DEPENDENCIAS:**
+
+🐍 **Django==5.2.6:**
+• Framework web principal del proyecto
+• Versión específica para compatibilidad
+• Incluye todas las funcionalidades del admin panel
+
+🖼️ **Pillow==10.0.1:**
+• Biblioteca para procesamiento de imágenes
+• Necesaria para las fotos de perfil de usuarios
+• Requerida para las imágenes de retos
+• Maneja formatos: JPG, PNG, GIF, WebP
+• Funcionalidades: redimensionado, compresión, conversión
+
+📝 **INSTALACIÓN DE DEPENDENCIAS:**
+```bash
+# Instalar todas las dependencias
+pip install -r requirements.txt
+
+# O instalar individualmente
+pip install Django==5.2.6
+pip install Pillow==10.0.1
+```
+
+🔧 **NOTAS IMPORTANTES:**
+• Pillow es requerido para el sistema de imágenes
+• Sin Pillow, las fotos de perfil y retos no funcionarán
+• Django 5.2.6 es la versión estable recomendada
+• Verificar compatibilidad con Python 3.8+
+
+================================================================================
+11. COMANDOS ÚTILES
 ================================================================================
 
 Para ejecutar desde la terminal:
@@ -524,21 +728,80 @@ Para ejecutar desde la terminal:
    >>> from cuentas.models import PerfilUsuario
    >>> PerfilUsuario.objects.order_by('-puntuacion_total')[:5]
 
+🆕 NUEVOS COMANDOS ÚTILES:
+
+🖼️ Ver usuarios con fotos de perfil:
+   python manage.py shell
+   >>> from cuentas.models import PerfilUsuario
+   >>> PerfilUsuario.objects.exclude(foto_perfil='').count()
+
+🎨 Ver retos con imágenes:
+   python manage.py shell
+   >>> from retos.models import Reto
+   >>> Reto.objects.exclude(imagen_reto='').count()
+
+🗑️ Limpiar imágenes no utilizadas:
+   python manage.py shell
+   >>> from django.core.files.storage import default_storage
+   >>> # Revisar archivos en media/ que no estén referenciados
+
+📊 Estadísticas de uso de avatares:
+   python manage.py shell
+   >>> from cuentas.models import PerfilUsuario
+   >>> from django.db.models import Count
+   >>> PerfilUsuario.objects.values('avatar_por_defecto').annotate(count=Count('avatar_por_defecto'))
+
 ================================================================================
-10. CONTACTO Y SOPORTE
+12. URLS PRINCIPALES DEL SISTEMA
+================================================================================
+
+🌐 **PÁGINAS PRINCIPALES:**
+• Inicio: http://127.0.0.1:8000/
+• Dashboard: http://127.0.0.1:8000/retos/dashboard/
+• Lista de retos: http://127.0.0.1:8000/retos/lista/
+• Perfil de usuario: http://127.0.0.1:8000/cuentas/perfil/
+• Editar perfil: http://127.0.0.1:8000/cuentas/perfil/editar/
+
+🔐 **AUTENTICACIÓN:**
+• Login: http://127.0.0.1:8000/cuentas/login/
+• Registro: http://127.0.0.1:8000/cuentas/registro/
+• Cambiar contraseña: http://127.0.0.1:8000/cuentas/cambiar-password/
+• Logout: http://127.0.0.1:8000/cuentas/logout/
+
+👨‍💼 **PANEL DE ADMINISTRACIÓN:**
+• Admin principal: http://127.0.0.1:8000/admin/
+• Usuarios: http://127.0.0.1:8000/admin/cuentas/user/
+• Perfiles: http://127.0.0.1:8000/admin/cuentas/perfilusuario/
+• Intentos: http://127.0.0.1:8000/admin/juego/intento/
+• Rankings: http://127.0.0.1:8000/admin/juego/ranking/
+• Retos: http://127.0.0.1:8000/admin/retos/reto/
+• Categorías: http://127.0.0.1:8000/admin/retos/categoria/
+
+================================================================================
+13. CONTACTO Y SOPORTE
 ================================================================================
 
 Para problemas técnicos o dudas:
-• Revisar esta documentación
-• Verificar logs del servidor
-• Comprobar configuración de Django
+• Revisar esta documentación actualizada
+• Verificar logs del servidor Django
+• Comprobar configuración de Django y archivos estáticos
 • Consultar documentación oficial de Django
+• Verificar permisos de archivos en directorio media/
+
+🆕 **NUEVAS FUNCIONALIDADES SOPORTADAS:**
+• Sistema de imágenes clickeables
+• Gestión de fotos de perfil y avatares
+• Toggle de contraseñas
+• Protección de rutas de autenticación
+• Escalado automático de imágenes
 
 ================================================================================
                                 FIN DEL DOCUMENTO
 ================================================================================
 
 Fecha de creación: Septiembre 2024
-Versión: 1.0
+Última actualización: Septiembre 2025
+Versión: 2.0 (Actualizada con nuevas características)
 Sistema: Retos Lógico Matemáticos
 Desarrollado con: Django 5.2.6
+CustomUser: Implementado (cuentas.User)
