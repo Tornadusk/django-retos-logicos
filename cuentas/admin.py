@@ -23,7 +23,7 @@ class PerfilUsuarioInline(admin.StackedInline):
 
 class UserAdmin(BaseUserAdmin):
     inlines = (PerfilUsuarioInline,)
-    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'get_puntuacion', 'get_nivel', 'view_action')
+    list_display = ('imagen_usuario', 'username', 'email', 'first_name', 'last_name', 'is_staff', 'get_puntuacion', 'get_nivel', 'view_action')
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'date_joined')
     # Permitir borrado masivo, pero filtrando al propio usuario en la ejecución
     def get_actions(self, request):
@@ -87,6 +87,30 @@ class UserAdmin(BaseUserAdmin):
             return format_html('<span style="background-color: #28a745; color: white; padding: 2px 6px; border-radius: 3px;">Nivel {}</span>', obj.perfil.nivel)
         return format_html('<span style="color: #6c757d;">N/A</span>')
     get_nivel.short_description = 'Nivel'
+    
+    def imagen_usuario(self, obj):
+        """Muestra la imagen del usuario en la tabla del admin"""
+        if hasattr(obj, 'perfil'):
+            perfil = obj.perfil
+            # Si tiene foto personal
+            if perfil.foto_perfil:
+                return format_html(
+                    '<img src="{}" alt="Foto de {}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #007bff;">',
+                    perfil.foto_perfil.url, obj.username
+                )
+            # Si tiene avatar por defecto
+            elif perfil.avatar_por_defecto:
+                return format_html(
+                    '<div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #007bff, #0056b3); display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; border: 2px solid #007bff;">{}</div>',
+                    perfil.avatar_por_defecto
+                )
+        
+        # Si no tiene foto ni avatar, mostrar icono por defecto
+        return format_html(
+            '<div style="width: 40px; height: 40px; border-radius: 50%; background: #6c757d; display: flex; align-items: center; justify-content: center; font-size: 16px; color: white; border: 2px solid #6c757d;">👤</div>'
+        )
+    imagen_usuario.short_description = 'Foto'
+    imagen_usuario.allow_tags = True
 
 # Re-register UserAdmin con el modelo swappeado
 User = get_user_model()
@@ -98,7 +122,7 @@ admin.site.register(User, UserAdmin)
 
 class PerfilUsuarioAdmin(admin.ModelAdmin):
     form = PerfilUsuarioForm
-    list_display = ['usuario', 'puntuacion_badge', 'retos_completados', 'nivel_badge', 'fecha_registro']
+    list_display = ['imagen_perfil', 'usuario', 'puntuacion_badge', 'retos_completados', 'nivel_badge', 'fecha_registro']
     list_filter = ['nivel', 'fecha_registro']
     search_fields = ['usuario__username', 'usuario__email']
     ordering = ['-puntuacion_total']
@@ -178,6 +202,28 @@ class PerfilUsuarioAdmin(admin.ModelAdmin):
             color, obj.nivel
         )
     nivel_badge.short_description = 'Nivel'
+    
+    def imagen_perfil(self, obj):
+        """Muestra la imagen del perfil del usuario"""
+        # Si tiene foto personal
+        if obj.foto_perfil:
+            return format_html(
+                '<img src="{}" alt="Foto de {}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #28a745;">',
+                obj.foto_perfil.url, obj.usuario.username
+            )
+        # Si tiene avatar por defecto
+        elif obj.avatar_por_defecto:
+            return format_html(
+                '<div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #28a745, #1e7e34); display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; border: 2px solid #28a745;">{}</div>',
+                obj.avatar_por_defecto
+            )
+        
+        # Si no tiene foto ni avatar, mostrar icono por defecto
+        return format_html(
+            '<div style="width: 40px; height: 40px; border-radius: 50%; background: #6c757d; display: flex; align-items: center; justify-content: center; font-size: 16px; color: white; border: 2px solid #6c757d;">👤</div>'
+        )
+    imagen_perfil.short_description = 'Foto'
+    imagen_perfil.allow_tags = True
     
     def has_add_permission(self, request):
         # Evitar "Add" aquí: use el inline en Usuario o cree el usuario (que crea el perfil)

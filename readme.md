@@ -11,7 +11,7 @@ Sistema web para resolver retos lógicos y matemáticos con sistema de puntuaci�
 - **Dashboard Personal**: Estadísticas y progreso individual
 - **Fotos de Perfil**: Sistema completo de avatares con fotos personalizadas y emojis predefinidos
 - **Imágenes de Retos**: Los retos pueden tener imágenes personalizadas o iconos temáticos
-- **Admin Panel**: Gestión completa de retos y usuarios
+- **Admin Panel**: Gestión completa de retos y usuarios con imágenes visuales
 
 ## Estructura del Proyecto
 
@@ -188,12 +188,18 @@ RetosLógicoMatemáticos/
 
 ### Consejos rápidos de navegación
 - En varias listas, puedes hacer clic en determinadas columnas para ir directo a la edición del registro:
-  - Users → columna **Username**.
+- **Columna principal clickeable** (primera columna de la izquierda) para edición directa:
+   Cuentas:
+  - Cuentas → Users → **imagen de perfil** (antes era Username)
+  - Cuentas →  Perfiles de Usuario → **imagen de perfil** (antes era Usuario)
+  Juego:
   - Juego → Intentos → columna **Usuario**.
   - Juego → Rankings → columna **Posición**.
-  - Retos → Categorías → columna **Nombre**.
-  - Retos → Retos → columna **Título**.
-- Acciones masivas (Actions): marca los checkboxes, elige la acción en el selector (por ejemplo, "Cambiar número de intentos"), y pulsa **Go**. Verás un indicador tipo "Go 1 of 12 selected" antes de confirmar y aplicar.
+   Retos:
+  - Retos → Retos → **imagen del reto** (antes era Título)
+  - Retos → Categorías → columna **Nombre** (se mantiene igual)
+  
+- **Acciones masivas (Actions)**: marca los checkboxes, elige la acción en el selector (por ejemplo, "Cambiar número de intentos"), y pulsa **Go**. Verás un indicador tipo "Go 1 of 12 selected" antes de confirmar y aplicar.
 
 ### Cuentas (Cuentas → Users y Perfiles de Usuario)
 - **Users (CustomUser)**: 
@@ -362,6 +368,58 @@ RetosLógicoMatemáticos/
 - **Escalado de imágenes**: Las imágenes tienen efectos hover y se escalan suavemente
 - **Eliminación desde admin**: Acción masiva para eliminar imágenes de múltiples retos
 - **Iconos en datos de ejemplo**: Los 12 retos de ejemplo tienen iconos temáticos apropiados
+- **Imágenes en admin**: Las tablas de usuarios, perfiles y retos muestran imágenes clickeables para edición directa
+
+## Panel de Administración - Mejoras Visuales
+
+### 🖼️ Imágenes de Usuario en el Admin
+
+El panel de administración ahora incluye **imágenes de perfil** en las tablas de usuarios y perfiles:
+
+#### **Tabla de Usuarios** (`/admin/cuentas/user/`):
+- ✅ **Columna "Foto"** como primera columna
+- ✅ **Foto personal** si el usuario subió una imagen
+- ✅ **Avatar emoji** si seleccionó un avatar por defecto
+- ✅ **Icono por defecto** (👤) si no tiene foto ni avatar
+- ✅ **Borde azul** para diferenciarlo de otros elementos
+
+#### **Tabla de Perfiles** (`/admin/cuentas/perfilusuario/`):
+- ✅ **Columna "Foto"** como primera columna
+- ✅ **Mismo sistema** de imágenes que la tabla de usuarios
+- ✅ **Borde verde** para diferenciarlo de la tabla de usuarios
+- ✅ **Identificación visual rápida** de los perfiles
+
+#### **Características técnicas:**
+- **Tamaño consistente**: 40x40px en ambas tablas
+- **Formato circular**: `border-radius: 50%` para todas las imágenes
+- **Responsive**: Se adapta al tamaño de la tabla
+- **Fallback inteligente**: Foto personal → Avatar emoji → Icono por defecto
+- **Imágenes clickeables**: Las fotos de perfil son enlaces directos para editar el usuario/perfil
+
+#### **Navegación mejorada en el admin:**
+- ✅ **Primera columna clickeable**: La columna más a la izquierda siempre lleva a la edición directa
+- ✅ **Cambio de comportamiento**: Las imágenes ahora son la primera columna en lugar de texto
+- ✅ **Experiencia intuitiva**: Identificación visual + acceso directo a edición
+- ✅ **Consistencia**: Mismo comportamiento en todas las tablas (Users, Perfiles, Retos)
+
+#### **URLs del admin con imágenes:**
+- **Usuarios**: `http://127.0.0.1:8000/admin/cuentas/user/`
+- **Perfiles**: `http://127.0.0.1:8000/admin/cuentas/perfilusuario/`
+- **Retos**: `http://127.0.0.1:8000/admin/retos/reto/`
+
+### 🔒 Protección de Rutas de Autenticación
+
+Se añadió protección para evitar que usuarios ya autenticados accedan a las rutas de login/registro:
+
+#### **Comportamiento mejorado:**
+- ✅ **Usuario logueado → `/cuentas/login/`**: Redirige al dashboard con mensaje informativo
+- ✅ **Usuario logueado → `/cuentas/registro/`**: Redirige al dashboard con mensaje informativo
+- ✅ **Mensajes claros**: Informan al usuario sobre su sesión activa
+- ✅ **UX mejorada**: Evita confusión y múltiples sesiones
+
+#### **Mensajes informativos:**
+- **Login**: *"Ya tienes una sesión activa. Para cambiar de cuenta, primero cierra sesión."*
+- **Registro**: *"Ya tienes una sesión activa. Para crear otra cuenta, primero cierra sesión."*
 
 ## Fixtures (Datos de Ejemplo)
 

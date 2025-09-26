@@ -18,7 +18,6 @@ def registro(request):
         return redirect('retos:dashboard')
     
     if request.method == 'POST':
-        print(f"DEBUG: POST request recibido, CSRF token: {request.POST.get('csrfmiddlewaretoken', 'NO ENCONTRADO')}")
         form = RegistroForm(request.POST)
         if form.is_valid():
             user = form.save()
